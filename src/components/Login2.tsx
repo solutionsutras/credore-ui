@@ -195,15 +195,6 @@ const Login2 = () => {
 						</div>
 					</div>
 					<div className="w-full md:w-2/5 bg-[#29564b] md:rounded-tr-2xl md:rounded-br-2xl rounded-2xl text-white  flex flex-col justify-center items-center">
-						{/* <h2 className="text-3xl font-bold mb-2">
-							Pradhan Mantri Awas Yojana
-						</h2> */}
-						{/* <div className="border-2 w-32 border-white bg-white inline-block mb-2 rounded-full"></div> */}
-						{/* <p className="mb-10">Pradhan Mantri Awas Yojana Mission</p> */}
-						{/* <button className="flex items-center justify-center border-2 border-white rounded-full gap-2 px-2 py-2 font-semibold hover:bg-white hover:text-orange-400 transition duration-300 ease-out">
-							<FaHome className="text-lg" />
-							<Link href="/">Go To Home</Link>
-						</button> */}
 						<Lottie className="w-full" animationData={study} loop={true} />
 					</div>
 				</div>
