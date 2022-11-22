@@ -46,6 +46,19 @@ const Login2 = () => {
 		}),
 		onSubmit: (values) => {
 			console.log(values);
+			fetch("https://jsonplaceholder.typicode.com/posts", {
+				method: "POST",
+				body: JSON.stringify({
+					title: "foo",
+					body: "bar",
+					userId: 1,
+				}),
+				headers: {
+					"Content-type": "application/json; charset=UTF-8",
+				},
+			})
+				.then((response) => response.json())
+				.then((json) => console.log(json));
 			formik.resetForm();
 		},
 		// onSubmit: async (values, props) => {
@@ -181,16 +194,20 @@ const Login2 = () => {
 										Forgot Password?
 									</Link>
 								</div>
-								<motion.button
-									variants={buttonVariants}
-									whileHover="hover"
-									type="submit"
-									className={`flex items-center justify-between border-2 gap-3 border-[#29564b] text-[#29564b] rounded-full px-5 py-2 font-semibold hover:bg-[#29564b] hover:text-white transition duration-300 ease-out`}
-									disabled={!formik?.values?.email || !formik?.values?.password}
-								>
-									Login
-									<MdLogin className="text-lg" />
-								</motion.button>
+								<Link href={"/dashboard"}>
+									<motion.button
+										variants={buttonVariants}
+										whileHover="hover"
+										type="submit"
+										className={`flex items-center justify-between border-2 gap-3 border-[#29564b] text-[#29564b] rounded-full px-5 py-2 font-semibold hover:bg-[#29564b] hover:text-white transition duration-300 ease-out`}
+										disabled={
+											!formik?.values?.email || !formik?.values?.password
+										}
+									>
+										Login
+										<MdLogin className="text-lg" />
+									</motion.button>
+								</Link>
 							</form>
 						</div>
 					</div>

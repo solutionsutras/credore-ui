@@ -4,7 +4,11 @@ import Image from "next/image";
 import Login2 from "../components/Login2";
 
 const Home: NextPage = () => {
-	return <Login2 />;
+	return (
+		<>
+			<Login2 />;
+		</>
+	);
 };
 
 export default Home;
