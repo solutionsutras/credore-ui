@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import Link from "next/link";
 import { useState } from "react";
-import { FaEye, FaEyeSlash, FaHome, FaRegEnvelope } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaRegEnvelope } from "react-icons/fa";
 import { MdLockOutline, MdLogin } from "react-icons/md";
 import * as Yup from "Yup";
 import study from "../assets/animation/study.json";
@@ -44,57 +44,44 @@ const Login2 = () => {
 				.required("Email is required")
 				.email("Email is not valid"),
 		}),
-		onSubmit: (values) => {
+		onSubmit: async (values) => {
 			console.log(values);
-			fetch("https://jsonplaceholder.typicode.com/posts", {
-				method: "POST",
-				body: JSON.stringify({
-					title: "foo",
-					body: "bar",
-					userId: 1,
-				}),
-				headers: {
-					"Content-type": "application/json; charset=UTF-8",
-				},
-			})
-				.then((response) => response.json())
-				.then((json) => console.log(json));
-			formik.resetForm();
+			try {
+				const result = await fetch(
+					"http://credore.eastus.cloudapp.azure.com/auth/signin",
+					{
+						method: "POST",
+						body: JSON.stringify({
+							email: values.email,
+							password: values.password,
+						}),
+						headers: {
+							"Content-type": "application/json; charset=UTF-8",
+						},
+					}
+				);
+				const response = await result.json();
+				console.log(response);
+				localStorage.setItem("user", JSON.stringify(response));
+				location.href = "/dashboard";
+				formik.resetForm();
+			} catch (error) {
+				console.log(error);
+			}
+			// await fetch("http://credore.eastus.cloudapp.azure.com/auth/signin", {
+			// 	method: "POST",
+			// 	body: JSON.stringify({
+			// 		email: "seller@sigmafoods.com",
+			// 		password: "test123",
+			// 	}),
+			// 	headers: {
+			// 		"Content-type": "application/json; charset=UTF-8",
+			// 	},
+			// })
+			// 	.then((response) => response.json())
+			// 	.then((response) => console.log(response));
+			// window.location.href = "/dashboard";
 		},
-		// onSubmit: async (values, props) => {
-		//   try {
-		//     const response = await post({
-		//       path: 'auth/signin',
-		//       body: JSON.stringify(values),
-		//     })
-		//     console.log(response)
-		//     if (response.status === 200) {
-		//       saveToLocalStorage('PmAccessToken', response?.success?.data?.token)
-		//       response?.success?.data?.user?.role === 'SUPER-ADMIN'
-		//         ? (window.location.href = '/panel')
-		//         : response?.success?.data?.user?.role === 'GROUND-STAFF'
-		//         ? (window.location.href = '/panel/groundstaff-dashboard')
-		//         : response?.success?.data?.user?.role === 'ADMIN'
-		//         ? (window.location.href = '/panel/admin-dashboard')
-		//         : (window.location.href = '/')
-		//       setUser(response?.success?.data?.user)
-		//       //   setIsLogin2(true)
-		//       //   scrollTop()
-		//       props.resetForm()
-		//     } else {
-		//       Swal.fire({ icon: 'error', text: response?.error?.message })
-		//     }
-
-		//     // Swal.fire({
-		//     //   title: 'Success',
-		//     //   text: 'You have successfully logged in',
-		//     //   icon: 'success',
-		//     //   confirmButtonText: 'OK',
-		//     // })
-		//   } catch (error) {
-		//     console.log(error)
-		//   }
-		// },
 	});
 
 	return (
@@ -104,11 +91,11 @@ const Login2 = () => {
 				<div className="bg-white rounded-2xl shadow-2xl flex-col md:flex-row flex lg:w-7/12">
 					<div className="w-full md:w-3/5 p-5">
 						<div className="text-left inline-block">
-							<img
+							{/* <img
 								src={"https://www.credore.xyz/assets/images/Logo.png"}
 								alt="logo"
 								className="w-36"
-							/>
+							/> */}
 						</div>
 						<div className="py-5">
 							<h2 className="text-3xl font-bold text-[#f15a29] mb-2">
@@ -194,20 +181,16 @@ const Login2 = () => {
 										Forgot Password?
 									</Link>
 								</div>
-								<Link href={"/dashboard"}>
-									<motion.button
-										variants={buttonVariants}
-										whileHover="hover"
-										type="submit"
-										className={`flex items-center justify-between border-2 gap-3 border-[#29564b] text-[#29564b] rounded-full px-5 py-2 font-semibold hover:bg-[#29564b] hover:text-white transition duration-300 ease-out`}
-										disabled={
-											!formik?.values?.email || !formik?.values?.password
-										}
-									>
-										Login
-										<MdLogin className="text-lg" />
-									</motion.button>
-								</Link>
+								<motion.button
+									variants={buttonVariants}
+									whileHover="hover"
+									type="submit"
+									className={`flex items-center justify-between border-2 gap-3 border-[#29564b] text-[#29564b] rounded-full px-5 py-2 font-semibold hover:bg-[#29564b] hover:text-white transition duration-300 ease-out`}
+									disabled={!formik?.values?.email || !formik?.values?.password}
+								>
+									Login
+									<MdLogin className="text-lg" />
+								</motion.button>
 							</form>
 						</div>
 					</div>

@@ -1,4 +1,4 @@
-import { Dropdown } from "flowbite-react";
+import { Button, Dropdown } from "flowbite-react";
 import Link from "next/link";
 
 const TopHeader = () => {
@@ -9,25 +9,23 @@ const TopHeader = () => {
 				id="topHeader"
 			>
 				<div className="flex gap-3 justify-between items-center">
-					<Link href="/">
+					{/* <Link href="/">
 						<img
 							src={"https://www.credore.xyz/assets/images/Logo.png"}
 							alt="logo"
 							className="w-48"
 						/>
-					</Link>
+					</Link> */}
 				</div>
-				<div className="hidden md:flex gap-4 items-center justify-center">
-					<Dropdown label="Dropdown button">
-						<Dropdown.Header>
-							<span className="block text-sm">Bonnie Green</span>
-							<span className="block text-sm font-medium truncate">
-								bonnie@flowbite.com
-							</span>
-						</Dropdown.Header>
-						<Dropdown.Item>Dashboard</Dropdown.Item>
+				<div className="flex gap-4 items-center justify-center">
+					<Button className="border-2 border-[#f3754c]" color="light">
+						About
+					</Button>
+					<Button className="border-2 border-[#325d53]" color="light">
+						Docs
+					</Button>
+					<Dropdown color="success" label="Profile">
 						<Dropdown.Item>Settings</Dropdown.Item>
-						<Dropdown.Item>Earnings</Dropdown.Item>
 						<Dropdown.Divider />
 						<Dropdown.Item>Sign out</Dropdown.Item>
 					</Dropdown>
