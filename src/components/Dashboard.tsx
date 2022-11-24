@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 
 type Product = {
 	dlpcId: string;
+	obligorOrgName: string;
+	beneficiaryOrgName: string;
 };
 
 type USER = {
@@ -19,7 +21,7 @@ const Dashboard = () => {
 	const [visible, setVisible] = useState<boolean>(false);
 	const [show, setShow] = useState<boolean>(false);
 	const [data, setData] = useState<Product[]>([]);
-	// const [email, setEmail] = useState("");
+	const [email, setEmail] = useState<string | null>();
 
 	useEffect(() => {
 		// const url = "https://jsonplaceholder.typicode.com/users";
@@ -36,9 +38,10 @@ const Dashboard = () => {
 				if (!authStr) return;
 				const auth: USER = JSON.parse(authStr);
 
-				// const myEmail = auth.user.email;
-				// setEmail(myEmail);
-				// console.log(myEmail);
+				const myEmail = auth.user.email;
+				console.log(myEmail);
+				setEmail(myEmail);
+
 				console.log("user", auth.user.email);
 			} catch (error) {
 				console.log(error);
@@ -50,14 +53,14 @@ const Dashboard = () => {
 	return (
 		<div className="px-10 py-10">
 			<Card>
-				{/* <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-					Welcome Mr.Kumar ,
-				</h5> */}
+				<h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+					{/* Welcome Mr.Kumar , */}
+				</h5>
 				<p className="font-normal text-gray-700 dark:text-gray-400">
 					Here are the biggest enterprise technology acquisitions of 2021 so
 					far, in reverse chronological order.
 				</p>
-				{/* <p>{email}</p> */}
+				<p>Email : {email}</p>
 
 				<Tabs.Group
 					className="flex justify-start"
@@ -65,7 +68,7 @@ const Dashboard = () => {
 					style="default"
 				>
 					<Tabs.Item active={true} title="Promissory Note">
-						<div className="grid grid-cols-3 ">
+						<div className="grid grid-cols-3">
 							<div className="flex flex-col justify-center items-center w-56">
 								<p className="text-lg font-bold underline">dlpcId</p>
 								{/* <p>e4303e52-4a83</p> */}
@@ -88,21 +91,26 @@ const Dashboard = () => {
 									</div>
 									<div className="w-full h-[0.5px] bg-gray-400"></div>
 									<Modal.Body>
-										<div className="flex justify-evenly	">
+										<div className="py-4 grid grid-cols-4 gap-5 justify-items-center">
 											<div>
-												<p className="text-xl font-bold text-[#294adc]">
+												<p className="text-md font-bold text-[#294adc]">
 													The Makers of this promissory note
 												</p>
+												{data.map((item, index) => (
+													<p key={index}>{item.obligorOrgName}...</p>
+												))}
 												<p>Sample CompanyLLC</p>
 											</div>
 											<div>
-												<p className="text-xl font-bold text-[#294adc]">
+												<p className="text-md font-bold text-[#294adc]">
 													Makes commitment to pay the order of
 												</p>
-												<p>Demo LLC</p>
+												{data.map((item, index) => (
+													<p key={index}>{item.beneficiaryOrgName}...</p>
+												))}
 											</div>
 											<div>
-												<p className="text-xl font-bold text-[#294adc]">
+												<p className="text-md font-bold text-[#294adc]">
 													On Due Date
 												</p>
 												<p>{Date()}</p>
