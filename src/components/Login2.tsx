@@ -91,11 +91,11 @@ const Login2 = () => {
 				<div className="bg-white rounded-2xl shadow-2xl flex-col md:flex-row flex lg:w-7/12">
 					<div className="w-full md:w-3/5 p-5">
 						<div className="text-left inline-block">
-							{/* <img
+							<img
 								src={"https://www.credore.xyz/assets/images/Logo.png"}
 								alt="logo"
 								className="w-36"
-							/> */}
+							/>
 						</div>
 						<div className="py-5">
 							<h2 className="text-3xl font-bold text-[#f15a29] mb-2">
