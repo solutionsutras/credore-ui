@@ -9,13 +9,13 @@ const TopHeader = () => {
 				id="topHeader"
 			>
 				<div className="flex gap-3 justify-between items-center">
-					{/* <Link href="/">
+					<Link href="/">
 						<img
 							src={"https://www.credore.xyz/assets/images/Logo.png"}
 							alt="logo"
 							className="w-48"
 						/>
-					</Link> */}
+					</Link>
 				</div>
 				<div className="flex gap-4 items-center justify-center">
 					<Button className="border-2 border-[#f3754c]" color="light">
@@ -25,9 +25,9 @@ const TopHeader = () => {
 						Docs
 					</Button>
 					<Dropdown color="success" label="Profile">
-						<Dropdown.Item>Settings</Dropdown.Item>
+						<Dropdown.Item className="font-bold">Settings</Dropdown.Item>
 						<Dropdown.Divider />
-						<Dropdown.Item>Sign out</Dropdown.Item>
+						<Dropdown.Item className="font-bold">Sign out</Dropdown.Item>
 					</Dropdown>
 				</div>
 			</section>
