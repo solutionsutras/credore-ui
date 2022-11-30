@@ -8,6 +8,12 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import note from "../assets/animation/note.json";
 import Lottie from "lottie-react";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 let dlpcId = uuidv4();
 let refId = uuidv4();
 const buttonVariants = {
@@ -34,14 +40,23 @@ type USER = {
 // const [orgli, setOrgli] = useState<string | null>();
 
 const ContactForm = () => {
-	// useEffect(() => {
-	// 	const authStr = localStorage.getItem("user");
+	const [open, setOpen] = React.useState(false);
+	const [amount, setAmount] = useState("");
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
 
-	// 	if (!authStr) return;
-	// 	const auth: USER = JSON.parse(authStr);
+	const handleClose = () => {
+		setOpen(false);
+	};
+	//  useEffect(() => {
+	// const authStr = localStorage.getItem("user");
 
-	// 	const myOrgli = auth.user.orgLei;
-	// 	console.log("orgli", myOrgli);
+	// if (!authStr) return;
+	// const auth: USER = JSON.parse(authStr);
+
+	// const myEmail = auth.user.email;
+	// console.log("Email", myEmail);
 	// 	// setOrgli(myOrgli);
 	// }, []);
 	const formik = useFormik({
@@ -53,10 +68,6 @@ const ContactForm = () => {
 			chain: "",
 			invoiceNumber: "",
 			poNumber: "",
-			// beneficiary: "",
-			// country: "91",
-			// message: "",
-			// location: "",
 		},
 		validationSchema: Yup.object({
 			committee: Yup.string()
@@ -86,11 +97,13 @@ const ContactForm = () => {
 
 			const myOrgli = auth.user.orgLei;
 			console.log("orgli", myOrgli);
+			const myEmail = auth.user.email;
+			console.log("Email", myEmail);
 
 			console.log(values);
 			try {
 				const result = await fetch(
-					`http://credore.eastus.cloudapp.azure.com/dlpc/seller%40sigmafoods.com/xinfin`,
+					`http://credore.eastus.cloudapp.azure.com/dlpc/${myEmail}/${values.chain}`,
 					{
 						method: "POST",
 						body: JSON.stringify({
@@ -111,6 +124,7 @@ const ContactForm = () => {
 							invoiceNumber: values.invoiceNumber,
 							poNumber: values.poNumber,
 							// plan: values.plan,
+							chain: values.chain,
 						}),
 						headers: {
 							"Content-type": "application/json; charset=UTF-8",
@@ -118,11 +132,15 @@ const ContactForm = () => {
 					}
 				);
 				const response = await result.json();
-				console.log(response);
-				localStorage.setItem("pNote", JSON.stringify(response));
+				console.log(response.dlpc.amount);
+				setAmount(response.dlpc.amount);
+				localStorage.setItem("pNote", response);
+				const pnote = localStorage.getItem("pNote");
+				// console.log(pnote);
 				// location.href = "/dashboard";
 				// confirm("sure");
 				formik.resetForm();
+				handleClickOpen();
 			} catch (error) {
 				console.log(error);
 			}
@@ -135,7 +153,7 @@ const ContactForm = () => {
 				<form onSubmit={formik.handleSubmit}>
 					<div className=" w-full ">
 						<label className="mb-2 block text-sm font-semibold text-gray-700 ">
-							Drawee
+							Drawee{amount}
 						</label>
 
 						<input
@@ -174,9 +192,10 @@ const ContactForm = () => {
 							<option value="" disabled selected>
 								Chain
 							</option>
-							<option value="Fresher">ethereum</option>
-							<option value="lessthanoneyear">xinfin</option>
-							<option value="oneyear">polygon</option>
+							<option value="ethereum">ethereum</option>
+							<option value="xinfin">xinfin</option>
+							<option value="polygon">polygon</option>
+							<option value="hedera">hedera</option>
 						</select>
 						<span className="text-base font-bold text-red-600">
 							{formik.touched.chain && formik.errors.chain}
@@ -315,7 +334,34 @@ const ContactForm = () => {
 				<div className="flex justify-center items-center">
 					<h1 className="text-white text-3xl font-bold ">New pNote</h1>
 				</div>
-				<Lottie className="w-96" animationData={note} loop={true} />
+				{/* <Lottie className="w-96" animationData={note} loop={true} /> */}
+			</div>
+			<div>
+				{/* <Button variant="outlined" onClick={handleClickOpen}>
+					Open alert dialog
+				</Button> */}
+				<Dialog
+					open={open}
+					onClose={handleClose}
+					aria-labelledby="alert-dialog-title"
+					aria-describedby="alert-dialog-description"
+				>
+					<DialogTitle id="alert-dialog-title">
+						{"Use Google's location service?"}
+					</DialogTitle>
+					<DialogContent>
+						<DialogContentText id="alert-dialog-description">
+							Let Google help apps determine location. This means sending
+							anonymous location data to Google, even when no apps are running.
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleClose}>Disagree</Button>
+						<Button onClick={handleClose} autoFocus>
+							Agree
+						</Button>
+					</DialogActions>
+				</Dialog>
 			</div>
 		</div>
 	);
