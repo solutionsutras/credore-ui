@@ -12,6 +12,8 @@ import Warranty from "../components/Warranty";
 import JoinOurTeam from "../components/JoinOurTeam";
 import TermsAndCondition from "../components/Terms&Condition";
 import PrivacyPolicy from "../components/PrivacyPolicy";
+import Verify from "../components/Verify";
+import Reject from "../components/Reject";
 
 const verifyOtp = () => {
 	return (
@@ -27,8 +29,10 @@ const verifyOtp = () => {
 			{/* <Faq /> */}
 			{/* <Warranty /> */}
 			{/* <JoinOurTeam /> */}
-			<TermsAndCondition />
+			{/* <TermsAndCondition /> */}
 			{/* <PrivacyPolicy /> */}
+			{/* <Verify /> */}
+			<Reject />
 		</div>
 	);
 };
