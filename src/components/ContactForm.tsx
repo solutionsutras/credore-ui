@@ -47,6 +47,8 @@ const ContactForm = () => {
 	const [commiter, setCommiter] = useState("");
 	const [commite, setCommite] = useState("");
 	const [chain, setChain] = useState("");
+	const [id, setId] = useState("");
+	const [tx, setTx] = useState("");
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -137,8 +139,15 @@ const ContactForm = () => {
 					}
 				);
 				const response = await result.json();
-				console.log(response.dlpc.amount);
-				setAmount(response.dlpc);
+				console.log(response);
+				setAmount(response.dlpc.amount);
+				setCurrency(response.dlpc.currency);
+				setDate(response.dlpc.dueDate);
+				setCommiter(response.dlpc.committer);
+				setCommite(response.dlpc.committee);
+				setId(response.dlpc.dlpcId);
+				setChain(response.chain);
+				setTx(response.txHash);
 				localStorage.setItem("pNote", response);
 				const pnote = localStorage.getItem("pNote");
 				// console.log(pnote);
@@ -352,23 +361,33 @@ const ContactForm = () => {
 					aria-describedby="alert-dialog-description"
 				>
 					<DialogTitle id="alert-dialog-title">
-						{"Use Google's location service?"}
+						Promissory note details
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText id="alert-dialog-description">
-							<h1>Promissory Note Initiated</h1>
-							<p>By LEI</p>
-							<p>Amount</p>
-							<p>Currency</p>
-							<p>Due date</p>
-							<p>Drawee</p>
-							<p>Blockchain</p>
+							<h1>Promissory Note Initiated {id.slice(0, 8)}...</h1>
+							<p>By LEI - {commiter}</p>
+							<p>Amount- {amount}</p>
+							<p>Currency- {currency}</p>
+							<p>Due date- {date}</p>
+							<p>Drawee- {commite}</p>
+							<p>Blockchain- {chain}</p>
+							<p>
+								TX details-
+								<a
+									className="underline decoration-blue-500"
+									target="_blank"
+									href={tx}
+								>
+									{tx}
+								</a>
+							</p>
+							{/* <p>TX details- {tx}</p> */}
 						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
-						<Button onClick={handleClose}>Disagree</Button>
 						<Button onClick={handleClose} autoFocus>
-							Agree
+							OK
 						</Button>
 					</DialogActions>
 				</Dialog>
