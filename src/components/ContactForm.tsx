@@ -42,6 +42,11 @@ type USER = {
 const ContactForm = () => {
 	const [open, setOpen] = React.useState(false);
 	const [amount, setAmount] = useState("");
+	const [currency, setCurrency] = useState("");
+	const [date, setDate] = useState("");
+	const [commiter, setCommiter] = useState("");
+	const [commite, setCommite] = useState("");
+	const [chain, setChain] = useState("");
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -133,7 +138,7 @@ const ContactForm = () => {
 				);
 				const response = await result.json();
 				console.log(response.dlpc.amount);
-				setAmount(response.dlpc.amount);
+				setAmount(response.dlpc);
 				localStorage.setItem("pNote", response);
 				const pnote = localStorage.getItem("pNote");
 				// console.log(pnote);
@@ -153,7 +158,7 @@ const ContactForm = () => {
 				<form onSubmit={formik.handleSubmit}>
 					<div className=" w-full ">
 						<label className="mb-2 block text-sm font-semibold text-gray-700 ">
-							Drawee{amount}
+							Drawee
 						</label>
 
 						<input
@@ -351,8 +356,13 @@ const ContactForm = () => {
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText id="alert-dialog-description">
-							Let Google help apps determine location. This means sending
-							anonymous location data to Google, even when no apps are running.
+							<h1>Promissory Note Initiated</h1>
+							<p>By LEI</p>
+							<p>Amount</p>
+							<p>Currency</p>
+							<p>Due date</p>
+							<p>Drawee</p>
+							<p>Blockchain</p>
 						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
