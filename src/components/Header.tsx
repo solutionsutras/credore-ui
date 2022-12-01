@@ -9,11 +9,11 @@ const TopHeader = () => {
 				id="topHeader"
 			>
 				<div className="flex gap-3 justify-between items-center">
-					<Link href="/">
+					<Link href="/dashboard">
 						<img
 							src={"https://www.credore.xyz/assets/images/Logo.png"}
 							alt="logo"
-							className="w-48"
+							className="w-48 cursor-pointer"
 						/>
 					</Link>
 				</div>
