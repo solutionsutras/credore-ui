@@ -162,7 +162,7 @@ const ContactForm = () => {
 	});
 
 	return (
-		<div className=" w-[60vw] flex  m-auto border-2 border-orange-500 rounded-lg bg-[#3e1f92]">
+		<div className=" w-[60vw] flex  m-auto border-2 border-orange-500 rounded-lg bg-[#29564b]">
 			<div className="w-1/2 p-3 bg-white">
 				<form onSubmit={formik.handleSubmit}>
 					<div className=" w-full ">
