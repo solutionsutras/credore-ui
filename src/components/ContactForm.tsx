@@ -365,8 +365,8 @@ const ContactForm = () => {
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText id="alert-dialog-description">
-							<h1>Promissory Note Initiated {id.slice(0, 8)}...</h1>
-							<p>By LEI - {commiter}</p>
+							<h1>Promissory Note Initiated {id}</h1>
+							<p>Drawer - {commiter}</p>
 							<p>Amount- {amount}</p>
 							<p>Currency- {currency}</p>
 							<p>Due date- {date}</p>
