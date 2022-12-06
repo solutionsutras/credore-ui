@@ -218,10 +218,11 @@ const Drawee = () => {
 													</p>
 
 													<p className="text-sm font-bold text-gray-500">
-														{item.signedByCommitter &&
-															moment(item.signedDateByCommitter).format(
-																"MMM Do YY"
-															)}
+														{item.signedByCommittee === true
+															? moment(item.signedDateByCommitter).format(
+																	"MMM Do YY"
+															  )
+															: ""}
 													</p>
 												</div>
 											</div>
@@ -242,11 +243,11 @@ const Drawee = () => {
 													</p>
 													<p className="text-sm font-bold text-gray-500">
 														<p>
-															{" "}
-															{item.signedByCommitter &&
-																moment(item.signedDateByCommitter).format(
-																	"MMM Do YY"
-																)}
+															{item.signedByCommitter === true
+																? moment(item.signedDateByCommitter).format(
+																		"MMM Do YY"
+																  )
+																: ""}
 														</p>
 													</p>
 												</div>
