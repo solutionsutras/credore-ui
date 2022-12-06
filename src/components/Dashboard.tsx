@@ -20,6 +20,7 @@ type Product = {
 	currency: string;
 	applicableRules: string;
 	dueDate: string;
+	signedDateByCommitter: string;
 };
 
 type VERIFY = {
@@ -69,6 +70,7 @@ const Dashboard = () => {
 				console.log("Result is >>>>", result);
 				if (result.length > 0) {
 					setData(result);
+					localStorage.setItem("resultItem", JSON.stringify(result));
 				} else {
 					return;
 				}
@@ -127,28 +129,31 @@ const Dashboard = () => {
 							<Divider />
 						</div>
 						{data.length === 0 ? (
-							<p>No data avl</p>
+							<p>No data available</p>
 						) : (
 							<div className="flex flex-col justify-start w-full">
 								{!data ? (
-									<p className="text-lg font-bold underline">No data avl</p>
+									<p className="text-lg font-bold underline">
+										No data available
+									</p>
 								) : (
 									data.map((item, index) => (
 										<>
 											{/* {item.amount} */}
-											<div className="grid grid-cols-3 gap-24 px-10 py-5">
-												<div className="ml-32 ">
+											<div className="grid grid-cols-3 gap-36 px-1 py-5">
+												<div className="ml-9 ">
 													<p className="w-full text-lg font-bold underline">
 														dlpcId
 													</p>
 													<p key={index}>{item.dlpcId}</p>
-													<p>${item.amount}</p>
 												</div>
 												<div className="pl-10">
 													<Button onClick={() => setVisible(true)}>View</Button>
 													<Modal size="5xl" show={visible} popup={true}>
 														<div className="px-5 pt-8 pb-3 flex justify-between">
-															<p className="text-2xl font-bold">pNote</p>
+															<p className="text-2xl font-bold">
+																Promissory Note
+															</p>
 														</div>
 														<Divider className="bg-gray-300" />
 														<div className="w-full bg-white"></div>
@@ -199,12 +204,12 @@ const Dashboard = () => {
 																</p>
 
 																<p className="w-1/2 font-medium">
+																	{item.currency.toUpperCase()}{" "}
 																	{converter
 																		.toWords(item.amount)
 																		.replace(/^(.)|\s+(.)/g, (c: any) =>
 																			c.toUpperCase()
 																		)}{" "}
-																	{item.currency}
 																</p>
 
 																<p className="text-xs text-gray-700 py-3">
@@ -232,7 +237,11 @@ const Dashboard = () => {
 																		</p>
 																		<p className="text-sm font-bold text-gray-500">
 																			<p>
-																				{item.signedByCommitter && "26/11/2022"}
+																				{item.signedByCommitter === true
+																					? moment(
+																							item.signedDateByCommitter
+																					  ).format("MMM Do YY")
+																					: ""}
 																			</p>
 																		</p>
 																	</div>
@@ -255,7 +264,11 @@ const Dashboard = () => {
 																		</p>
 
 																		<p className="text-sm font-bold text-gray-500">
-																			{item.signedByCommittee && "26/11/2022"}
+																			{item.signedByCommittee === true
+																				? moment(
+																						item.signedDateByCommitter
+																				  ).format("MMM Do YY")
+																				: ""}
 																		</p>
 																	</div>
 																</div>

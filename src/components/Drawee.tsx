@@ -1,5 +1,6 @@
 import { Divider } from "@mui/material";
 import { Button, Card, Dropdown, Modal, Table, Tabs } from "flowbite-react";
+import moment from "moment";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 // import DropdownBtn from "./DropdownBtn";
@@ -12,6 +13,8 @@ type Product = {
 	signedByCommittee: boolean;
 	amount: string;
 	currency: string;
+	dueDate: string;
+	signedDateByCommitter: string;
 };
 
 type VERIFY = {
@@ -31,6 +34,8 @@ type USER = {
 	};
 };
 
+type RES = [{ dlpcId: string }];
+
 // type MYNAME = {
 // 	MyName: string;
 // };
@@ -45,6 +50,7 @@ const Drawee = () => {
 	const [verify, setVerify] = useState<VERIFY[]>([]);
 	const [hide, setHide] = useState(false);
 	const [select, setSelect] = useState("");
+	const [email, setEmail] = useState<string | null>();
 
 	useEffect(() => {
 		const authStr = localStorage.getItem("user");
@@ -53,6 +59,7 @@ const Drawee = () => {
 		const auth: USER = JSON.parse(authStr);
 
 		const myOrgli = auth.user.orgLei;
+
 		console.log("orgli", myOrgli);
 		setOrgli(myOrgli);
 		const url = `http://credore.eastus.cloudapp.azure.com/dlpc/pnotebylei/drawee/${myOrgli}`;
@@ -61,6 +68,7 @@ const Drawee = () => {
 				const response = await fetch(url);
 				const result = await response.json();
 				console.log("Result", result);
+
 				if (result.length > 0) {
 					setData(result);
 				} else {
@@ -76,7 +84,22 @@ const Drawee = () => {
 	}, [orgli]);
 
 	useEffect(() => {
-		const url = `http://credore.eastus.cloudapp.azure.com/dlpc/verifyproof/seller@sigmafoods.com/d0aa9863-029a-4c91-be7d-b9f804a2bd43/${select}`;
+		const resStr = localStorage.getItem("resultItem");
+
+		if (!resStr) return;
+		const rest: RES = JSON.parse(resStr);
+		console.log("result is", rest);
+		// const myDlpc = rest.dlpcId
+
+		const authStr = localStorage.getItem("user");
+		if (!authStr) return;
+		const auth: USER = JSON.parse(authStr);
+		const myEmail = auth.user.email;
+
+		console.log("email", myEmail);
+		setEmail(myEmail);
+
+		const url = `http://credore.eastus.cloudapp.azure.com/dlpc/verifyproof/${myEmail}/d68e6582-2116-4c26-9204-557e982a99b5/${select}`;
 
 		const fetchData = async () => {
 			try {
@@ -98,7 +121,7 @@ const Drawee = () => {
 	};
 
 	return data.length === 0 ? (
-		<p>No data avl</p>
+		<p>No data available</p>
 	) : (
 		<div className="flex flex-col justify-start w-full">
 			{!data ? (
@@ -107,16 +130,16 @@ const Drawee = () => {
 				data.map((item, index) => (
 					<>
 						{/* {item.amount} */}
-						<div className="grid grid-cols-3 gap-24 px-10 py-5">
-							<div className="ml-32 ">
+						<div className="grid grid-cols-3 gap-36 px-10 py-5">
+							<div className="ml-5 ">
 								<p className=" text-lg font-bold underline">dlpcId</p>
-								<p key={index}>{item.dlpcId.slice(0, 8)}...</p>
+								<p key={index}>{item.dlpcId}</p>
 							</div>
 							<div className="pl-10">
 								<Button onClick={() => setVisible(true)}>View</Button>
 								<Modal size="5xl" show={visible} popup={true}>
 									<div className="px-5 pt-8 pb-3 flex justify-between">
-										<p className="text-2xl font-bold">pNote</p>
+										<p className="text-2xl font-bold">Promissory Note</p>
 									</div>
 									<Divider className="bg-gray-300" />
 									<div className="w-full bg-white"></div>
@@ -138,13 +161,13 @@ const Drawee = () => {
 												<Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
 													<>
 														<Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-															{item.obligorOrgName}
-														</Table.Cell>
-														<Table.Cell className="  text-gray-900 dark:text-white font-medium ">
 															{item.beneficiaryOrgName}
 														</Table.Cell>
 														<Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-															24/11/2022
+															{item.obligorOrgName}
+														</Table.Cell>
+														<Table.Cell className="  text-gray-900 dark:text-white font-medium ">
+															{moment(item.dueDate).format("MMM Do YY")}
 														</Table.Cell>
 														<Table.Cell className="  text-gray-900 dark:text-white font-medium ">
 															<p className="font-semibold text-blue-600 underline cursor-pointer">
@@ -163,12 +186,12 @@ const Drawee = () => {
 											<p className="text-3xl font-medium">${item.amount}</p>
 
 											<p className="w-1/2 font-medium">
+												{item.currency.toUpperCase()}{" "}
 												{converter
 													.toWords(item.amount)
 													.replace(/^(.)|\s+(.)/g, (c: any) =>
 														c.toUpperCase()
 													)}{" "}
-												{item.currency}
 											</p>
 
 											<p className="text-xs text-gray-700 py-3">
@@ -195,7 +218,10 @@ const Drawee = () => {
 													</p>
 
 													<p className="text-sm font-bold text-gray-500">
-														{item.signedByCommittee && "26/11/2022"}
+														{item.signedByCommitter &&
+															moment(item.signedDateByCommitter).format(
+																"MMM Do YY"
+															)}
 													</p>
 												</div>
 											</div>
@@ -215,7 +241,13 @@ const Drawee = () => {
 														Date of signature
 													</p>
 													<p className="text-sm font-bold text-gray-500">
-														<p>{item.signedByCommitter && "26/11/2022"}</p>
+														<p>
+															{" "}
+															{item.signedByCommitter &&
+																moment(item.signedDateByCommitter).format(
+																	"MMM Do YY"
+																)}
+														</p>
 													</p>
 												</div>
 											</div>
