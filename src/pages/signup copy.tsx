@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import { AiTwotoneMail, AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Link from "next/link";
@@ -6,23 +6,15 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import * as Yup from "Yup";
 
-const SignIn = () => {
+const SignUp = () => {
+  const [fullName, setFullName] = useState();
   const [email, setEmail] = useState();
-  const [passwordInput, setPasswordInput] = useState("");
+  const [phone, setPhone] = useState();
   const [passwordType, setPasswordType] = useState("password");
+  const [createPassword, setCreatePassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [Datas, setDatas] = useState([]);
   const router = useRouter();
-
-  //   const handlePasswordChange = (evnt) => {
-  //     setPasswordInput(evnt.target.value);
-  //   }
-  const togglePassword = () => {
-    if (passwordType === "password") {
-      setPasswordType("text");
-      return;
-    }
-    setPasswordType("password");
-  };
 
   // Formic and Yup setup
   const formik = useFormik({
@@ -32,41 +24,50 @@ const SignIn = () => {
       checked: false,
     },
     validationSchema: Yup.object({
+      fullname: Yup.string()
+        .required("Name Required.")
+        .min(3, "Minimum 3 letter")
+        .max(100, "Maximum 100 letter"),
+      email: Yup.string()
+        .required("Email Required.")
+        .email("Enter valid email"),
       password: Yup.string()
         .required("Password is required")
         .min(6, "Password must be at least 6 characters"),
-      email: Yup.string()
-        .required("Email is required")
-        .email("Email is not valid"),
+
+      country: Yup.string().required("Country Code Required."),
+      phone: Yup.number()
+        .test("minlength", "phone number at list 10 digits", (val) =>
+          Boolean(val && val.toString().length >= 6)
+        )
+        .test("len", "phone number can not be more then 16 digits", (val) =>
+          Boolean(val && val.toString().length <= 16)
+        )
+        .required("Phone number is required"),
     }),
     onSubmit: async (values) => {
-      let user = {
+      alert("values.email: " + values.email);
+      alert("values.password: " + values.password);
+      let newSeller = {
         email: values.email,
         password: values.password,
       };
-      console.log("user", user);
       try {
         axios
-          .post("https://dev.credore.xyz/auth/signin", user)
+          .post("http://credore.eastus.cloudapp.azure.com/auth/signin", seller)
           .then((response) => {
             // setDatas(response);
             console.log("response.data: ", response.data);
+            // alert("response.data: " + response.data);
             localStorage.setItem("user", JSON.stringify(response.data));
-            console.log('!response.data.customerId: ', !response.data.customerId)
-            if(!response.data.customerId){
-              location.href = "/onboard";  
-            }else{
-              location.href = "/dashboard";
-            }
+            location.href = "/dashboard";
           })
           .catch((error) => {
             console.log("Fetch error: ", error);
-            alert("SIgnup Error - " + error.response.data.message);
-            console.log("Signin Error: ", error.response.data.message);
           });
       } catch (error) {
-        alert("Something went wrong - " + error.response.data);
-        console.log("Something went wrong: ", error.response.data);
+        alert("error: " + error);
+        console.log("error: ", error);
       }
     },
   });
@@ -89,22 +90,38 @@ const SignIn = () => {
         {/* login heading */}
         <div className="flex flex-col items-center justify-center bg-[#FFFFFF] shadow-2xl rounded-xl p-10 w-[90%] max-w-[550px] gap-y-4 mt-10">
           <p className="text-gray-500 opacity-50 tracking-widest">
-            USER LOGIN
+            NEW SELLER SIGNUP
           </p>
-          <h1 className="text-[#29564b] font-bold text-4xl">Welcome Back!</h1>
 
           {/* form starts */}
           <form
-            className="flex flex-col items-center justify-center w-full mt-5"
+            className="flex flex-col items-center justify-center w-full"
             onSubmit={formik.handleSubmit}
           >
             <div className="w-full relative">
+              <input
+                type="text"
+                id="fullname"
+                name="fullname"
+                value={formik?.values?.fullname}
+                // className="bg-[#FEFEFE] px-5 py-3  w-full mt-5  border-b-2 border-gray-500 border-solid outline-none focus:border-gray-500 focus:border-2 peer"
+                placeholder="Your Name..."
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={` ${
+                  formik?.touched?.fullname && formik?.errors?.fullname
+                    ? " border-red-600 text-red-700 bg-[#FFFFFF]"
+                    : "border-gray-400 bg-[#FEFEFE]"
+                } w-full px-5 py-3 border-2 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-2 peer`}
+              />
+            </div>
+
+            <div className="w-full relative mt-5">
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formik?.values?.email}
-                // className="bg-[#FEFEFE] px-5 py-3  w-full mt-5  border-b-2 border-gray-500 border-solid outline-none focus:border-gray-500 focus:border-1 peer"
                 placeholder="Your email address"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -112,46 +129,75 @@ const SignIn = () => {
                   formik?.touched?.email && formik?.errors?.email
                     ? " border-red-600 text-red-700 bg-[#FFFFFF]"
                     : "border-gray-400 bg-[#FEFEFE]"
-                } w-full px-5 py-3 border-1 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-1 peer`}
+                } w-full px-5 py-3 border-2 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-2 peer`}
               />
 
               <AiTwotoneMail className="absolute h-5 right-1  bottom-4 pr-2 w-8" />
             </div>
-            <div className="w-full relative">
+
+            <div className="w-full relative mt-5">
               <input
-                type="password"
-                id="password"
-                name="password"
-                pattern="[a-z0-9]{1,15}"
-                // className="bg-[#FEFEFE] py-3 px-5 w-full mt-5 border-b-2 border-gray-500 border-solid outline-none focus:border-gray-500 focus:border-1 peer"
-                className={` ${
-                  formik?.touched?.password && formik?.errors?.password
-                    ? "border-red-600 text-red-700 bg-[#FFFFFF]"
-                    : "border-gray-400 bg-[#FEFEFE]"
-                } w-full  px-5 py-3 mt-5 border-1 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70  focus:border-gray-500 focus:border-1 peer`}
-                value={formik?.values?.password}
-                // value={"sell1234"}
-                placeholder="******"
+                type="phone"
+                id="phone"
+                name="phone"
+                value={formik?.values?.phone}
+                placeholder="Your phone number"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                className={` ${
+                  formik?.touched?.phone && formik?.errors?.phone
+                    ? " border-red-600 text-red-700 bg-[#FFFFFF]"
+                    : "border-gray-400 bg-[#FEFEFE]"
+                } w-full px-5 py-3 border-2 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-2 peer`}
               />
-              {/* {formik?.touched?.password && formik?.errors?.password && (
-                <small className="text-red-600">
-                  {formik?.errors?.password}
-                </small>
-              )} */}
-
-              <AiFillEyeInvisible className="absolute h-5 right-1  bottom-4 pr-2 w-8" />
             </div>
 
-            <button
-              // className=" text-white bg-violet-500 opacity-70 px-15 py-2 rounded-md shadow block w-full"
-              className="bg-orange-500 rounded-[19px] font-medium text-richblack-900 w-full h-[55px] mt-6 text-center text-white text-xl "
-              type="submit"
-              disabled={!formik?.values?.email || !formik?.values?.password}
-              // onClick={(e: any) => formik.handleSubmit()}
-            >
-              Sign in
+            <div className="grid grid-cols-1 gap-4 w-full mt-5">
+              <div className="w-full relative mt5">
+                <input
+                  type="password"
+                  id="createPassword"
+                  name="createPassword"
+                  value={formik?.values?.createPassword}
+                placeholder="Password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={` ${
+                  formik?.touched?.createPassword && formik?.errors?.createPassword
+                    ? " border-red-600 text-red-700 bg-[#FFFFFF]"
+                    : "border-gray-400 bg-[#FEFEFE]"
+                } w-full px-5 py-3 border-2 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-2 peer`}
+                  // className="mt-5  p-[12px] border-b-2 border-gray-500 border-solid outline-none focus:border-gray-500 focus:border-2 peer"
+                />
+
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4 w-full">
+              <div className="w-full relative mt5">
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formik?.values?.confirmPassword}
+                placeholder="Password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={` ${
+                  formik?.touched?.confirmPassword && formik?.errors?.confirmPassword
+                    ? " border-red-600 text-red-700 bg-[#FFFFFF]"
+                    : "border-gray-400 bg-[#FEFEFE]"
+                } w-full px-5 py-3 border-2 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-2 peer`}
+                  // className="mt-5  p-[12px] border-b-2 border-gray-500 border-solid outline-none focus:border-gray-500 focus:border-2 peer"
+                />
+
+              </div>
+            </div>
+
+
+            </div>
+
+            <button className="bg-orange-500 rounded-[19px] font-medium text-richblack-900 w-full h-[55px] mt-6 text-center text-white text-xl ">
+              Create Account
             </button>
           </form>
 
@@ -170,22 +216,19 @@ const SignIn = () => {
               alt=""
               className="h-6 "
             />
-            <p>New to Credore?</p>
-            <button onClick={() => router.push("/signup")}>
-              <p className="font-bold cursor-pointer text-sm border-b-2 border-gray-600">Sign up</p>
-            </button>
-            {/* <p className="font-bold cursor-pointer text-sm">Sign up now</p> */}
+            <p>Not registered?</p>
+            <p className="font-bold cursor-pointer text-sm">Sign up now</p>
           </div>
         </div>
 
         {/* footer  */}
-        <div className=" flex gap-4 items-center mt-5 w-[400px] ">
+        <div className=" flex gap-4 items-center h-[200px]   w-[400px] ">
           <img
             src="https://play-lh.googleusercontent.com/mrmyna8Br6lxrXJlOYeemtD83ZDiH7mR7ERMp03XufE3B5CTbeO2nUVyLy4LjrTzHSY=w480-h960-rw"
             alt=""
             className="h-5"
           />
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 ">
             We use advanced data protection to ensure your personal and
             financial details are kept safe.
           </p>
@@ -195,4 +238,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;

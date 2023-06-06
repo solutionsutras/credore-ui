@@ -1,231 +1,181 @@
+import React, { useState } from "react";
 import { useFormik } from "formik";
-import * as Yup from "Yup";
-import {
-	FaFacebookSquare,
-	FaTwitterSquare,
-	FaMailBulk,
-	FaGithub,
-} from "react-icons/fa";
-import Lottie from "lottie-react";
-import design from "../assets/animation/design.json";
+import { AiTwotoneMail, AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import axios from "axios";
+import * as Yup from "Yup";
 
-// Lottie background setup
 const SignUp = () => {
-	// const animationOption = {
-	// 	loop: true,
-	// 	autoplay: true,
-	// 	animationData: design,
-	// 	rendererSettings: {
-	// 		preserveAspectRatio: "xMidYMid slice",
-	// 	},
-	// };
+  const [email, setEmail] = useState();
+  const [passwordInput, setPasswordInput] = useState("");
+  const [Datas, setDatas] = useState([]);
+  const router = useRouter();
 
-	// Formic and Yup setup
-	const formik = useFormik({
-		initialValues: {
-			userName: "",
-			password: "",
-			email: "",
-			checked: false,
-		},
-		validationSchema: Yup.object({
-			password: Yup.string()
-				.required("Password is required")
-				.min(6, "Password must be at least 6 characters")
-				.max(12, "Password should not exceed 12 characters"),
-			email: Yup.string()
-				.required("Email is required")
-				.email("Email is not valid"),
-			userName: Yup.string().required("UserName is required"),
-		}),
-		onSubmit: (values) => {
-			console.log(values);
-			formik.resetForm();
-		},
-	});
+  // Formic and Yup setup
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      checked: false,
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .required("Email Required.")
+        .email("Enter valid email"),
+      password: Yup.string()
+        .required("Password is required")
+        .min(6, "Password must be at least 6 characters"),
+    }),
+    onSubmit: async (values) => {
+      let newUser = {
+        email: values.email,
+        password: values.password,
+      };
+      console.log("newUser: ", newUser);
+      try {
+        axios
+          .post("https://dev.credore.xyz/auth/signup", newUser)
+          .then((response) => {
+            setDatas(response.data);
+            console.log("response.data: ", response.data);
 
-	// // console.log(formik.errors);
-	// console.log(formik.values);
-	// console.log(formik);
+            try {
+              axios
+                .post("https://dev.credore.xyz/auth/signin", newUser)
+                .then((response1) => {
+                  // setDatas(response);
+                  console.log("response1.data: ", response1.data);
 
-	return (
-		<main className="w-full flex flex-col md:flex-row bg-slate-100 font-montserrat">
-			{/* -------- left section------ */}
-			<section className="w-full lg:w-[70%] md:w-1/2 text-3xl text-indigo-500 font-bold m-10 mb-5 hidden md:block cursor-auto">
-				<img
-					src="https://searchingyard.com/assets/img/logo.png"
-					className="w-40 cursor-pointer"
-					alt="logo"
-				/>
+                  localStorage.setItem("user", JSON.stringify(response1.data));
+                  location.href = "/onboard";
+                })
+                .catch((error1) => {
+                  console.log("Sign in API error: ", error1.response.data.message);
+                });
+            } catch (error2) {
+              console.log("Sign in input invalid: ", error2);
+            }
+          })
+          .catch((error3) => {
+            alert("Signup Error - " + error3.response.data.message);
+            console.log("Signup Error: ", error3.response.data.message);
+          });
+      } catch (error4) {
+        console.log("Sign up input invalid: ", error4);
+      }
+    },
+  });
 
-				{/* Lottie background image */}
+  return (
+    <>
+      <div className="bg-[#F5F5F5] flex flex-col items-center justify-center h-[100%] w-full">
+        {/* logo container */}
 
-				{/* <Lottie
-					options={animationOption}
-					height={"39.07rem"}
-					width={"40rem"}
-					style={{ cursor: "default" }}
-				/> */}
-				<Lottie
-					animationData={design}
-					loop={true}
-					style={{ width: "40rem", height: "39.07rem" }}
-				/>
-			</section>
+        <div className="mt-[50px]">
+          <img
+            src="https://www.credore.xyz/assets/images/Logo.png"
+            alt="img"
+            width={160}
+            height={32}
+            loading="lazy"
+          />
+        </div>
 
-			{/* -------- right section------ */}
-			<section className="w-full lg:w-[30%] md:w-1/2 bg-white p-8 md:p-16 relative">
-				<img
-					src="https://lh6.googleusercontent.com/-_MnsVJxHpe0/AAAAAAAAAAI/AAAAAAAAAAA/mz37OTqVY1k/s55-p-k-no-ns-nd/photo.jpg"
-					className="w-15 md:hidden absolute inset-y-1 inset-x-[8%]"
-					alt="logo"
-				/>
+        {/* login heading */}
+        <div className="flex flex-col items-center justify-center bg-[#FFFFFF] shadow-2xl rounded-xl p-10 w-[90%] max-w-[550px] gap-y-4 mt-10">
+          <p className="text-gray-500 opacity-50 tracking-widest">
+            NEW USER SIGNUP
+          </p>
 
-				<h2 className="text-gray-500 text-xl m-[-0.2rem] font-medium mt-6 mb-3">
-					Adventure starts here 🚀
-				</h2>
-				<p className="text-gray-500 font-normal text-sm mb-4">
-					Make your app management easy and fun!
-				</p>
+          {/* form starts */}
+          <form
+            className="flex flex-col items-center justify-center w-full"
+            onSubmit={formik.handleSubmit}
+          >
+            <div className="w-full relative mt-5">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formik?.values?.email}
+                placeholder="Your email address"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={` ${
+                  formik?.touched?.email && formik?.errors?.email
+                    ? " border-red-600 text-red-700 bg-[#FFFFFF]"
+                    : "border-gray-400 bg-[#FEFEFE]"
+                } w-full px-5 py-3 border-1 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-1 peer`}
+              />
 
-				{/* sign up box */}
+              <AiTwotoneMail className="absolute h-5 right-1  bottom-4 pr-2 w-8  text-gray-500" />
+            </div>
 
-				<div className="my-2 flex flex-col ">
-					<label className="text-gray-600 text-sm block" htmlFor="userName">
-						Username:
-					</label>
-					<input
-						className={` ${
-							formik?.touched?.userName && formik?.errors?.userName
-								? " border-red-400 text-red-500"
-								: "border-gray-400"
-						} w-full border-2 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70`}
-						type="text"
-						name="userName"
-						id="userName"
-						value={formik?.values?.userName}
-						placeholder="admin"
-						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-					/>
-					{formik?.touched?.userName && formik?.errors?.userName && (
-						<small className="text-red-600">{formik?.errors?.userName}</small>
-					)}
-				</div>
-				<div className="my-2 flex flex-col ">
-					<label className="text-gray-600 text-sm block" htmlFor="email">
-						Email:
-					</label>
-					<input
-						className={` ${
-							formik?.touched?.email && formik?.errors?.email
-								? " border-red-400 text-red-500"
-								: "border-gray-400"
-						} w-full border-2  border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70`}
-						type="email"
-						name="email"
-						id="email"
-						value={formik?.values?.email}
-						placeholder="admin@demo.com"
-						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-					/>
-					{formik?.touched?.email && formik?.errors?.email && (
-						<small className="text-red-600">{formik?.errors?.email}</small>
-					)}
-				</div>
-				<div className="my-2 flex flex-col">
-					<div className="flex justify-between items-">
-						<label className="text-gray-600 text-sm block" htmlFor="password">
-							Password:
-						</label>
-					</div>
+            <div className="w-full relative mt-5">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formik?.values?.password}
+                placeholder="Password"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={` ${
+                  formik?.touched?.password && formik?.errors?.password
+                    ? " border-red-600 text-red-700 bg-[#FFFFFF]"
+                    : "border-gray-400 bg-[#FEFEFE]"
+                } w-full px-5 py-3 border-1 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70 focus:border-gray-500 focus:border-1 peer`}
+              />
 
-					<input
-						className={` ${
-							formik?.touched?.password && formik?.errors?.password
-								? "border-red-400 text-red-500"
-								: "border-gray-400"
-						}w-full border-2 border-solid rounded-md p-2 placeholder:text-slate-400 text-sm opacity-70`}
-						type="password"
-						name="password"
-						id="password"
-						value={formik?.values?.password}
-						placeholder="******"
-						onChange={formik.handleChange}
-						onBlur={formik.handleBlur}
-					/>
-					{formik?.touched?.password && formik?.errors?.password && (
-						<small className="text-red-600">{formik?.errors?.password}</small>
-					)}
-				</div>
-				<div className="flex justify-start items-start mb-4">
-					<input
-						type="checkbox"
-						name="checked"
-						id="check"
-						checked={formik?.values?.checked}
-						onChange={() => {
-							formik?.setFieldValue("checked", !formik.values?.checked);
-						}}
-						className="p-5 default:ring-2 h-5 w-5"
-					/>
-					<label
-						htmlFor="check"
-						className="text-gray-400 text-sm mx-3 cursor-pointer"
-					>
-						I agree to
-						<Link href="/">
-							<a className="text-center text-indigo-400 inline text-sm mx-1 cursor-pointer">
-								privacy policy & terms
-							</a>
-						</Link>
-					</label>
-				</div>
-				<button
-					className=" text-white bg-violet-500 opacity-70 px-15 py-2 rounded-md shadow block w-full"
-					onClick={(e: any) => formik.handleSubmit()}
-				>
-					Sign in
-				</button>
+              <AiFillEyeInvisible className="absolute h-5 right-1  bottom-4 pr-2 w-8 text-gray-500" />
+            </div>
 
-				<div className="mt-3 text-center">
-					<p className="text-gray-600 text-center mt-5 inline text-sm">
-						Already have an account?
-					</p>
-					<Link href="/signin">
-						<a className="text-center text-indigo-400 inline text-sm mx-1 cursor-pointer">
-							Sign in instead
-						</a>
-					</Link>
-				</div>
+            <button className="bg-orange-500 rounded-[19px] font-medium text-richblack-900 w-full h-[55px] mt-6 text-center text-white text-xl ">
+              Create Account
+            </button>
+          </form>
 
-				{/* Separator section */}
-				<div className="flex justify-center items-center space-x-4 mt-5">
-					<hr className="border-1 border-gray-400 opacity-25 inline-block w-40" />
-					<span className="text-gray-600 text-sm">or</span>
-					<hr className="border-1 border-gray-400 opacity-25 inline-block w-40" />
-				</div>
+          {/* forgot password and signup session */}
+          <div className="flex gap-2 items-center mt-5">
+            <img
+              src="data:image/jpeg;base64,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"
+              alt=""
+              className="h-5 "
+            />
+            <p className="font-bold pr-2 cursor-pointer text-sm mr-3 border-r-2 border-gray-500">
+              Forgot your Password
+            </p>
+            <img
+              src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIIAAACCCAMAAAC93eDPAAAAYFBMVEX///8AAAD+/v5/f39QUFDg4ODa2toZGRnw8PAbGxv39/ceHh4GBgahoaHQ0NBMTExAQEAODg5dXV0UFBTp6elGRka9vb2qqqp5eXlYWFgxMTElJSXIyMiQkJBsbGxlZWX6w7CCAAAECElEQVR4nO2bbXerIAyAhVZqrfZ17bo7t/3/f3kFpUVeJA4CvefcfFlPZeQxCUlEWhRIQoMuJyBIIDS/FWhuK9DsBPklRbDP6kjhhOx+zg7wAhkngRHmFaRwQv606r3LBMsNXYMPAJkg+w16hRYvQIkMUNd5Aer39fF4f0PU4OMvr4TLpkREmGdghDSCgeAxeKxQnYkUNIZZhJIV1YdE2ODEw7wNyk2vtj5KhjuGfm8ckC0r6HpEOHrXpqkirHCVQu8f9oiH3yAs/o8JwXZQ/FnKeFgvn2S+V/bGgQyBXVlQEQ/vyxFChDWPxUg+WVF//MIPgV5QCGQ8qGsSNHsQQrkjE9m+FRVLSsAuRJMNmwzwzx5YOlmjE2hVCjB/YBwYNtDqA2T6qHHARXFDggdfdjIAtqoN8DvEUidoJnGQ4JFMZmWVYWIDdIQ+DvTV0DD/vy2Qrl1Z5V4N1/s40Al2UXul/dUM9UG6YUBJDIJLVIKbC+AiCczVGNcLe0JO02iXd7wfCTYGwSVuHFzJycy7XEY16HFQdIMNDmtdpBdMgiZy194STuDse2z5IK4XaLHisx5c1y1ZeekTnL9VFgiu/rPUfNA007oQLKJRnUPwVmeIEs++cjGL4KnOMAJABXUjMBNg8WoEFS8nQmkSXBZUZ7HJBKufLoQY1RlYwR0Ilqx8WtKtc+3QFsKO8Obp0qK2aXaElWkDvD7RilDz6D+qBDIrV1GVOxFoXzgI+aoVBrkWujtsqQciULGF0xu+OowWeOSDjqwQnhdsCF3/1Xf/qZJ2GAn2lx4hfrOsI3AFfP9GtEyjL2Tz0n9cRVZvRRhUnfnn8munrEZumwQIwsb3/ptbb/ZvkRwe/cE6DQKXin/zfTvr+SAOgiWQVIQh0Fo1H6yeuzgprDAsN/qsDsdW3ciKgmBbTYYjHk825266k+ZBAO1vWAcZK+JnALgb/VG4FRwZRUcQvdKmtdSCeQRAwnINsSD83Kxj5xAgAM4rhiMYcwyeQQC1UGAEt8xaATIBLkKQABDoLEJ44QxGCG9gwh2Bj/AwdK5YUG4xE4JqZBwE+XBv3+LQnHzAQOBuHroDwAuudzGwjU1AxZ6fsIOx3aXJ2NDv4xIMf5xbrza5Lp0dNGi/BAFuhEUdjHMD2JQbmAD0ouw5xr0NrnlhiQ2ofx9mct31MkCVtgMDwF7Vob5EoVCMUBXuy5kPzaU5yhV09gCfIIW8AEB2hATiOaibn+AFnPD/nG4SBHwFuTO7x8oJMg76caPMAttlytnASIasgq0e8oYkRaf66gSoClI0MPkb1XlJ8pu2/LeZXV4goeUnyK0kzc/qMgsuAP6JcO/kYW+JoiBkB/DbADuxo59J/xcEv4VZktD+AotNGQ4EuriNAAAAAElFTkSuQmCC"
+              alt=""
+              className="h-6 "
+            />
+            <p>Already registered?</p>
+            <button onClick={() => router.push("/signin")}>
+              <p className="font-bold cursor-pointer text-sm border-b-2 border-gray-600">
+                Sign in
+              </p>
+            </button>
+            {/* <p className="font-bold cursor-pointer text-sm">Sign in</p> */}
+          </div>
+        </div>
 
-				{/* Footer section */}
-				<footer className="space-x-4 text-center mt-5">
-					<a href="/">
-						<FaFacebookSquare className="w-7 h-7 text-blue-900 inline" />
-					</a>
-					<a href="/">
-						<FaTwitterSquare className="w-7 h-7 text-sky-500 inline" />
-					</a>
-					<a href="/">
-						<FaMailBulk className="w-7 h-7 text-red-500 inline" />
-					</a>
-					<a href="/">
-						<FaGithub className="w-7 h-7 text-black inline" />
-					</a>
-				</footer>
-			</section>
-		</main>
-	);
+        {/* footer  */}
+        <div className=" flex gap-4 items-center mt-5 w-[400px] ">
+          <img
+            src="https://play-lh.googleusercontent.com/mrmyna8Br6lxrXJlOYeemtD83ZDiH7mR7ERMp03XufE3B5CTbeO2nUVyLy4LjrTzHSY=w480-h960-rw"
+            alt=""
+            className="h-5"
+          />
+          <p className="text-gray-600 text-sm">
+            We use advanced data protection to ensure your personal and
+            financial details are kept safe.
+          </p>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default SignUp;
