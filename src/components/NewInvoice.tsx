@@ -223,14 +223,23 @@ const NewInvoice = () => {
       try {
         // First Get ApiKey
 
+        localUser = localStorage.getItem("user");
+        authStr = JSON.parse(localUser);
+        console.log("authStr: ", authStr);
+
+        if (!authStr) return;
+        // auth = authStr.data[0];
+        auth = authStr;
+        console.log("auth: ", auth);
         // Add new invoice
         console.log("invoiceData: ", invoiceData);
         const myConfig = {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${auth.token}`,
           },
         };
+        console.log("myConfig - ", myConfig);
         const myApiKey = "7cda0428-8b7a-43c2-bf57-46caacb08d6e";
         axios
           .post(
@@ -242,7 +251,7 @@ const NewInvoice = () => {
             alert("Invoice added Successfully");
             console.log("2. response: ", response);
             localStorage.setItem("newInvoice", JSON.stringify(response.data));
-            // location.href = "/invoices";
+            location.href = "/invoices";
           })
           .catch((error) => {
             console.log("API post error: ", error);

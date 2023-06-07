@@ -215,6 +215,7 @@ const Invoices = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       };
+      console.log('Line 218 - myConfig: ', myConfig)
       const myApiKey = "7cda0428-8b7a-43c2-bf57-46caacb08d6e";
       axios
         .post(
@@ -234,7 +235,7 @@ const Invoices = () => {
           let newDate = this_date.toISOString();
 
           let nData = {
-            invoice_id: item.id,
+            invoice_id: item.invoice_number,
             assetMerkleRoot: response.data.merkleRoot,
             assetType: "invoice",
             glei: auth.organisationLei,
@@ -244,8 +245,8 @@ const Invoices = () => {
             status: "notarised",
           };
           console.log("nData: ", nData);
-          let chain = "xinfin";
-          console.log("111 myConfig: ", myConfig);
+          let chain = "polygon";
+          console.log("Line 249 - myConfig: ", myConfig);
 
           axios
             .post(
@@ -518,7 +519,7 @@ const Invoices = () => {
                                       {notarised ? (
                                         <div className="mt-5">
                                           <Button
-                                            onClick={() => verifyInvoice(item)}
+                                            onClick={() => verifyInvoice({item: item})}
                                             color="white"
                                             className="w-20 px-10 py5 bg-[#238f74] texy-white"
                                           >
@@ -550,14 +551,14 @@ const Invoices = () => {
                                         {item.amount}
                                       </p>
 
-                                      <p className="w-1/2 font-medium">
+                                      {/* <p className="w-1/2 font-medium">
                                         {item.currency.toUpperCase()}{" "}
                                         {converter
                                           .toWords(item.amount)
                                           .replace(/^(.)|\s+(.)/g, (c: any) =>
                                             c.toUpperCase()
                                           )}{" "}
-                                      </p>
+                                      </p> */}
 
                                       {/* <p className="text-xs text-gray-700 py-3">
                                         This note and any contractual
