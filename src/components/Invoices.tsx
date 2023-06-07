@@ -543,7 +543,11 @@ const Invoices = () => {
                                       </p>
 
                                       <p className="text-3xl font-medium">
-                                        ${item.amount}
+                                        {item.currency == "USD" ? '$':null}
+                                        {item.currency == "INR" ? '₹':null}
+                                        {item.currency == "EU" ? '€':null}
+                                        {item.currency == "EUR" ? '€':null}
+                                        {item.amount}
                                       </p>
 
                                       <p className="w-1/2 font-medium">
@@ -555,14 +559,14 @@ const Invoices = () => {
                                           )}{" "}
                                       </p>
 
-                                      <p className="text-xs text-gray-700 py-3">
+                                      {/* <p className="text-xs text-gray-700 py-3">
                                         This note and any contractual
                                         obligations arising out of or in
                                         connection with it will be governed by
                                         and construed in accordance with the
                                         laws of the State of Delaware without
                                         regard to conflict of laws principles .
-                                      </p>
+                                      </p> */}
                                     </div>
                                     <div className="flex justify-between items-center">
                                       <div className="mt-8 flex justify-start gap-10">
