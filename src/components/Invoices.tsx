@@ -3,10 +3,13 @@ import { Button, Card, Dropdown, Modal, Table, Tabs } from "flowbite-react";
 import moment from "moment";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+
+import { useRouter } from "next/router";
 import Drawee from "./Drawee";
 import DropdownBtn from "./DropdownBtn";
 import Sidebar from "./Sidebar";
 import axios from "axios";
+import { withRouter } from "next/router";
 
 // import Button from "@mui/material/Button";
 // import Menu from "@mui/material/Menu";
@@ -67,7 +70,7 @@ const Invoices = () => {
   const [name, setName] = useState("");
   const [token, setToken] = useState();
   const [config, setConfig] = useState({});
-
+  const router = useRouter();
   console.log("verify: ", verify);
   const testInvoiceData = [
     {
@@ -215,7 +218,7 @@ const Invoices = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       };
-      console.log('Line 218 - myConfig: ', myConfig)
+      console.log("Line 218 - myConfig: ", myConfig);
       const myApiKey = "7cda0428-8b7a-43c2-bf57-46caacb08d6e";
       axios
         .post(
@@ -309,6 +312,12 @@ const Invoices = () => {
     }
   };
 
+  const viewInvoice = (item) => {
+    console.log("viewInvoice - item: ", item);
+    localStorage.setItem("currentInvoice", JSON.stringify(item));
+    router.push("/view_invoice");
+  };
+
   return (
     <div className="flex justify-between">
       {/* Sidebar Start*/}
@@ -382,7 +391,11 @@ const Invoices = () => {
                             <td className="underline dark:text-white font-medium px-6 py-1">
                               <div className="flex">
                                 <Button
-                                  onClick={() => setVisible(true)}
+                                  // onClick={() => setVisible(true)}
+
+                                  onClick={() => {
+                                    viewInvoice(item);
+                                  }}
                                   className="px-0 py-0 bg-transparent text-[#0786c3] font-[600] hover:bg-transparent border-0"
                                 >
                                   View
@@ -519,7 +532,9 @@ const Invoices = () => {
                                       {notarised ? (
                                         <div className="mt-5">
                                           <Button
-                                            onClick={() => verifyInvoice({item: item})}
+                                            onClick={() =>
+                                              verifyInvoice({ item: item })
+                                            }
                                             color="white"
                                             className="w-20 px-10 py5 bg-[#238f74] texy-white"
                                           >
@@ -544,10 +559,10 @@ const Invoices = () => {
                                       </p>
 
                                       <p className="text-3xl font-medium">
-                                        {item.currency == "USD" ? '$':null}
-                                        {item.currency == "INR" ? '₹':null}
-                                        {item.currency == "EU" ? '€':null}
-                                        {item.currency == "EUR" ? '€':null}
+                                        {item.currency == "USD" ? "$" : null}
+                                        {item.currency == "INR" ? "₹" : null}
+                                        {item.currency == "EU" ? "€" : null}
+                                        {item.currency == "EUR" ? "€" : null}
                                         {item.amount}
                                       </p>
 
@@ -558,15 +573,6 @@ const Invoices = () => {
                                           .replace(/^(.)|\s+(.)/g, (c: any) =>
                                             c.toUpperCase()
                                           )}{" "}
-                                      </p> */}
-
-                                      {/* <p className="text-xs text-gray-700 py-3">
-                                        This note and any contractual
-                                        obligations arising out of or in
-                                        connection with it will be governed by
-                                        and construed in accordance with the
-                                        laws of the State of Delaware without
-                                        regard to conflict of laws principles .
                                       </p> */}
                                     </div>
                                     <div className="flex justify-between items-center">
