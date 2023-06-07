@@ -70,11 +70,12 @@ const Pnotes = () => {
     console.log("authStr: ", authStr);
   
     if (!authStr) return;
-    const auth: USER = JSON.parse(authStr)[0];
+    // const auth: USER = JSON.parse(authStr)[0];
+    const auth= JSON.parse(authStr);
     // const auth:USER = authStr;
     console.log("auth: ", auth);
   
-    const myOrgli = auth.lei;
+    const myOrgli = auth.organisationLei;
     console.log("orgli", myOrgli);
     setOrgli(myOrgli);
     setName(auth.name);
@@ -422,14 +423,14 @@ const Pnotes = () => {
                     )}
                   </div>
                 )}
-
+{/* 
                 <div className="mt-10">
                   <Divider />
                 </div>
                 <div className="py-2">
                   <h1 className="font-bold text-xl pb-2">As a drawee</h1>
                   <Divider />
-                </div>
+                </div> */}
 
                 {/* <Drawee /> */}
               </Tabs.Item>

@@ -55,6 +55,8 @@ const Invoices = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false);
+  const [notarised, setNotarised] = useState<boolean>(false);
+  const [verified, setVerified] = useState<boolean>(false);
   const [data, setData] = useState([]);
   const [orgli, setOrgli] = useState<string | null>();
   const [id, setId] = useState("");
@@ -146,10 +148,6 @@ const Invoices = () => {
     setId(auth.customerId);
     setName(auth.customerName);
     setEmail(auth.email);
-    // setToken(auth.token);
-
-    // const myConfig = authStr.config.headers;
-    // setConfig(myConfig);
 
     try {
       let userData = {
@@ -170,7 +168,7 @@ const Invoices = () => {
       const url = `https://dev.credore.xyz/invoice/invoice/7cda0428-8b7a-43c2-bf57-46caacb08d6e`;
       // Now get Invoices data
       axios
-        .get(`https://dev.credore.xyz/invoice/invoice/${myApiKey}`, myConfig)
+        .get(`https://dev.credore.xyz/invoice/${myApiKey}`, myConfig)
         .then((response) => {
           setData(response.data);
           console.log("response: ", response);
@@ -198,6 +196,116 @@ const Invoices = () => {
 
   const handleShow = () => {
     setHide(!hide);
+  };
+
+  const notarise = (item) => {
+    console.log("notarise - item: ", item);
+    try {
+      let authStr = localStorage.getItem("user");
+      authStr = JSON.parse(authStr);
+      console.log("authStr: ", authStr);
+
+      if (!authStr) return;
+      // const auth: USER = authStr.data[0];
+      const auth = authStr;
+
+      const myConfig = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${auth.token}`,
+        },
+      };
+      const myApiKey = "7cda0428-8b7a-43c2-bf57-46caacb08d6e";
+      axios
+        .post(
+          `https://dev.credore.xyz/invoice/merkleRoot/${myApiKey}`,
+          item,
+          myConfig
+        )
+        .then((response) => {
+          // alert("Merkle Root Created Successfully");
+
+          console.log("response: ", response);
+          let configData = JSON.parse(response.config.data);
+          console.log("configData: ", configData);
+
+          let this_date: Date = new Date();
+          console.log("this_date: ", this_date);
+          let newDate = this_date.toISOString();
+
+          let nData = {
+            invoice_id: item.id,
+            assetMerkleRoot: response.data.merkleRoot,
+            assetType: "invoice",
+            glei: auth.organisationLei,
+            gleiVerificationDate: newDate,
+            verificationDate: newDate,
+            originator: configData.supplier_contact_email,
+            status: "notarised",
+          };
+          console.log("nData: ", nData);
+          let chain = "xinfin";
+          console.log("111 myConfig: ", myConfig);
+
+          axios
+            .post(
+              `https://dev.credore.xyz/invoice/addasset/meta/${myApiKey}/${chain}`,
+              myConfig
+            )
+            .then((response) => {
+              alert("Invoice Notarised Successfully");
+              console.log("notarise response: ", response);
+
+              setNotarised(true);
+            })
+            .catch((error) => {
+              console.log("Notarising error: ", error);
+            });
+        })
+        .catch((error) => {
+          console.log("API post error: ", error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const verifyInvoice = (item) => {
+    let authStr = localStorage.getItem("user");
+    authStr = JSON.parse(authStr);
+    console.log("authStr: ", authStr);
+
+    if (!authStr) return;
+    // const auth: USER = authStr.data[0];
+    const auth = authStr;
+
+    const myConfig = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${auth.token}`,
+      },
+    };
+    const myApiKey = "7cda0428-8b7a-43c2-bf57-46caacb08d6e";
+    let thisInvoiceId = item.id;
+    let chain = "xinfin";
+    try {
+      axios
+        .post(
+          `https://dev.credore.xyz/invoice/proof/verify/${thisInvoiceId}/${chain}`,
+          myConfig
+        )
+        .then((response) => {
+          alert("Invoice Verified Successfully");
+          console.log("verify response: ", response);
+
+          setVerified(true);
+        })
+        .catch((error) => {
+          console.log("Verify error: ", error);
+        });
+    } catch (error) {
+      console.log("error: ", error);
+    }
   };
 
   return (
@@ -287,101 +395,148 @@ const Invoices = () => {
                                   <Divider className="bg-gray-300" />
                                   <div className="w-full bg-white"></div>
                                   <Modal.Body>
-                                    <div className="flex  justify-between m-auto border-1 border-theme1">
-                                      <div className="w-full px-5 py-3 bg-white">
-                                        <div className="flex items-center justify-start gap-4 col-md-12 mt-3">
-                                          <div className="col-md-6">
-                                            <label className="mb-1 block text-sm font-semibold text-gray-700 ">
-                                              Invoice No.
-                                            </label>
-                                            <span>{item.invoice_number}</span>
-                                          </div>
+                                    <Card>
+                                      <div className="items-center col-md-12 mt-3">
+                                        <div className="col-md-12 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Invoice No
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.invoice_number}
+                                          </span>
+                                        </div>
+                                        <div className="col-md-12 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Invoice Date
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.invoice_date}
+                                          </span>
+                                        </div>
+                                        <div className="col-md-12 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Due Date
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.due_date}
+                                          </span>
+                                        </div>
+                                        <div className="col-md-12 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Amount
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.currency} {item.amount}
+                                          </span>
                                         </div>
                                       </div>
-                                    </div>
-                                    <Table className="mb-7 text-sm">
-                                      <Table.Head className="bg-[#238f74]">
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Invoice Number
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-smase text-white ">
-                                          Invoice Date
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-smase text-white ">
-                                          On Due Date
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Amount
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Supplier
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Supplier Address
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Supplier Tax ID
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Supplier Email
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Supplier Contact Person
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Supplier Phone
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Customer
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Customer Address
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Customer Tax ID
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Customer Contact Person
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white ">
-                                          Customer Email
-                                        </Table.HeadCell>
-                                        <Table.HeadCell className=" border-y-2 border-gray-400 text-sm text-white "></Table.HeadCell>
-                                      </Table.Head>
-                                      <Table.Body className="divide-y">
-                                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                          <>
-                                            <Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-                                              {item.id}
-                                            </Table.Cell>
-                                            <Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-                                              {item.invoice_number}
-                                            </Table.Cell>
-                                            <Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-                                              {moment(item.invoice_date).format(
-                                                "MMM Do YY"
-                                              )}
-                                            </Table.Cell>
-                                            <Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-                                              {moment(item.due_date).format(
-                                                "MMM Do YY"
-                                              )}
-                                            </Table.Cell>
-                                            <Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-                                              {moment(item.due_date).format(
-                                                "MMM Do YY"
-                                              )}
-                                            </Table.Cell>
 
-                                            <Table.Cell className="  text-gray-900 dark:text-white font-medium ">
-                                              <p className="font-semibold text-blue-600 underline cursor-pointer">
-                                                Download PDF
-                                              </p>
-                                            </Table.Cell>
-                                          </>
-                                        </Table.Row>
-                                      </Table.Body>
-                                    </Table>
+                                      <div className="flex items-center justify-start gap-4 col-md-12 mt-3">
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_name}
+                                          </span>
+                                        </div>
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Address
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_address}
+                                          </span>
+                                        </div>
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Tax Id
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_vat_number}
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <div className="flex items-center justify-start gap-4 col-md-12 mt-3">
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Contact Person
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_contact_name}
+                                          </span>
+                                        </div>
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Contact Email
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_contact_email}
+                                          </span>
+                                        </div>
+
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Contact Phone
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_contact_phone}
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <div className="flex items-center justify-start gap-4 col-md-12 mt-3">
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Contact Person
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_contact_name}
+                                          </span>
+                                        </div>
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Contact Email
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_contact_email}
+                                          </span>
+                                        </div>
+
+                                        <div className="col-md-4 flex">
+                                          <label className="mb-1 block text-sm font-semibold text-gray-700 ">
+                                            Supplier Contact Phone
+                                          </label>
+                                          <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                                            {item.supplier_contact_phone}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </Card>
+                                    <div>
+                                      {notarised ? (
+                                        <div className="mt-5">
+                                          <Button
+                                            onClick={() => verifyInvoice(item)}
+                                            color="white"
+                                            className="w-20 px-10 py5 bg-[#238f74] texy-white"
+                                          >
+                                            Verify
+                                          </Button>
+                                        </div>
+                                      ) : (
+                                        <div className="mt-5">
+                                          <Button
+                                            onClick={() => notarise(item)}
+                                            color="white"
+                                            className="w-20 px-10 py5 bg-[#238f74] texy-white"
+                                          >
+                                            Notarise
+                                          </Button>
+                                        </div>
+                                      )}
+                                    </div>
                                     <div className="pt-3">
                                       <p className="text-xl font-bold text-[#f36e28]">
                                         The sum of
@@ -549,7 +704,6 @@ const Invoices = () => {
                 )}
               </div>
             )}
-            
           </Card>
         </div>
       </div>

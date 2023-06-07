@@ -123,11 +123,35 @@ const onboard = () => {
             setDatas(response.data);
             console.log("response.data: ", response);
             // alert("response.data: " + response.data);
-            localStorage.setItem("user", JSON.stringify(response));
-            location.href = "/dashboard";
+            // localStorage.setItem("user", JSON.stringify(response));
+            // let user = {
+            //   email: emailId,
+            //   password: values.password,
+            // };
+            // console.log("user", user);
+            
+            //   axios
+            //     .post("https://dev.credore.xyz/auth/signin", user)
+            //     .then((response) => {
+            //       // setDatas(response);
+            //       console.log("response.data: ", response.data);
+            //       localStorage.setItem("user", JSON.stringify(response.data));
+            //       console.log('!response.data.customerId: ', !response.data.customerId)
+            //       if(!response.data.customerId){
+            //         location.href = "/onboard";  
+            //       }else{
+            //         location.href = "/dashboard";
+            //       }
+            //     })
+            //     .catch((error) => {
+            //       console.log("Fetch error: ", error);
+            //       alert("SIgnup Error - " + error.response.data.message);
+            //       console.log("Signin Error: ", error.response.data.message);
+            //     });
+            location.href = "/signin";
           })
           .catch((error) => {
-            console.log("API post error: ", error.response.data);
+            console.log("API error: ", error.response.data);
           });
       } catch (error) {
         console.log("error: ", error);
