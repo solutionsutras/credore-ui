@@ -110,7 +110,7 @@ const BankDashboard = () => {
         )
         .then((response) => {
           setData(response.data.financeRequests);
-          console.log("response: ", response);
+          console.log("line -113- response: ", response);
           const result = response.data;
 
           console.log("Result is >>>>", result);
@@ -139,7 +139,7 @@ const BankDashboard = () => {
 
   const viewInvoice = (item) => {
     console.log("viewInvoice - item: ", item);
-    localStorage.setItem("currentInvoice", JSON.stringify(item));
+    localStorage.setItem("currentBankInvoice", JSON.stringify(item));
     router.push("/view_bank_invoice");
   };
 
@@ -206,19 +206,13 @@ const BankDashboard = () => {
                     <thead>
                       <tr className="bg-[#238f74]">
                         <th className="text-sm text-white font-bold px-6 py-2">
-                          Invoice Number
+                          Invoice Id
                         </th>
                         <th className="text-sm text-white font-bold px-6 py-2">
-                          Amount
+                          Borrower Id
                         </th>
                         <th className="text-sm text-white font-bold px-6 py-2">
-                          Issue Date
-                        </th>
-                        <th className="text-sm text-white font-bold px-6 py-2">
-                          Due date
-                        </th>
-                        <th className="text-sm text-white font-bold px-6 py-2">
-                          Status
+                          Invoice Value
                         </th>
                         <th className="text-sm text-white font-bold px-6 py-2"></th>
                       </tr>
@@ -227,24 +221,16 @@ const BankDashboard = () => {
                       <>
                         <tbody>
                           <tr className="my-0 text-sm bg-white dark:border-gray-700 dark:bg-gray-800 items-center">
-                            <td className="  text-gray-900 dark:text-white font-medium px-6 py-1">
-                              {item.invoice_number}
+                            <td className="  text-gray-900 dark:text-white font-medium px-6 py-1 text-center">
+                              {item.invoice_id}
                             </td>
-                            <td className="text-gray-900 dark:text-white font-medium px-6 py-1">
-                              {item.currency} {item.amount}
+                            <td className="text-gray-900 dark:text-white font-medium px-6 py-1 text-center">
+                              {item.borrower_id}
                             </td>
-                            <td className="text-gray-900 dark:text-white font-medium px-6 py-1">
-                              {moment(item.invoice_date).format("Do MMM YYYY")}
+                            <td className="text-gray-900 dark:text-white font-medium px-6 py-1 text-center">
+                            {item.invoice_value}
                             </td>
-                            <td className="text-gray-900 dark:text-white font-medium px-6 py-1">
-                              {moment(item.due_date).format("Do MMM YYYY")}
-                            </td>
-                            <td className="text-gray-900 dark:text-white font-medium px-6 py-1">
-                              {item.latestStatus
-                                ? item.latestStatus
-                                : "created"}
-                            </td>
-                            <td className="dark:text-white font-medium px-6 py-1">
+                            <td className="dark:text-white font-medium px-6 py-1 text-center">
                               <div className="flex">
                                 <Button
                                   onClick={() => {

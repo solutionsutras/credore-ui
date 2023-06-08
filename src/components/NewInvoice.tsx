@@ -259,7 +259,6 @@ const NewInvoice = () => {
           });
 
         // formik.resetForm();
-        handleClickOpen();
       } catch (error) {
         console.log(error);
       }

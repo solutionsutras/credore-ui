@@ -51,9 +51,13 @@ const ViewInvoice = () => {
     setInvoiceItems(currentInvoice.Invoice_Lines);
 
     if (currentInvoice.latestStatus) {
-      if (currentInvoice.latestStatus == "accepted") {
+      if (currentInvoice.latestStatus !== "notarised") {
+        setNotarised(false);
+      } else {
         setNotarised(true);
       }
+    } else {
+      setNotarised(false);
     }
   }, []);
 
@@ -62,7 +66,6 @@ const ViewInvoice = () => {
   }, [invoice]);
 
   const notarise = (item) => {
-    // console.log("notarise - item: ", item);
     try {
       let authStr = localStorage.getItem("user");
       authStr = JSON.parse(authStr);
@@ -110,7 +113,6 @@ const ViewInvoice = () => {
           console.log("nData: ", nData);
           console.log("104-myConfig: ", myConfig);
           const chain = "polygon";
-          setNotarised(true);
 
           axios
             .post(
@@ -119,6 +121,7 @@ const ViewInvoice = () => {
               myConfig
             )
             .then((response) => {
+              setNotarised(true);
               alert("Invoice Notarised Successfully");
               console.log("notarise response: ", response);
               //   let configData = JSON.parse(response.config.data);
@@ -192,7 +195,7 @@ const ViewInvoice = () => {
         <div className="px-3">
           <Card>
             <div>
-              <div className="pb-3">
+            <div className="px-5 pt-8 pb-3 flex justify-between">
                 <p className="text-2xl font-bold">Invoice Details</p>
               </div>
 
@@ -201,7 +204,7 @@ const ViewInvoice = () => {
                   Status
                 </label>
                 <span className="mb-1 block text-base font-medium text-gray-500 ml-5">
-                  {invoice.latestStatus}
+                  {invoice.latestStatus ? invoice.latestStatus : "Created"}
                 </span>
               </div>
 
@@ -392,14 +395,24 @@ const ViewInvoice = () => {
           </Card>
 
           <div>
-            <div className="mt-5">
-              <Button
+            <div className="my-5">
+              {notarised ? (
+                <Button
                 onClick={() => verifyInvoice(invoice)}
                 color="white"
                 className="w-60 px-10 py5 bg-[#238f74] text-white"
               >
                 Verify Invoice
               </Button>
+              ) : (
+                <Button
+                  onClick={() => notarise(invoice)}
+                  color="white"
+                  className="w-60 px-10 py5 bg-[#238f74] text-white"
+                >
+                  Notarise Invoice
+                </Button>
+              )}
             </div>
           </div>
         </div>

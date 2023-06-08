@@ -1,7 +1,9 @@
 import { Button, Dropdown } from "flowbite-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const TopHeader = () => {
+  const router = useRouter();
   return (
     <>
       <section
@@ -21,7 +23,13 @@ const TopHeader = () => {
           <Button className="border-1 border-[#f3754c]" color="light">
             About
           </Button>
-          <Button className="border-1 border-[#325d53]" color="light">
+          <Button
+            className="border-1 border-[#325d53]"
+            color="light"
+            onClick={() => {
+              router.push("https://docs.credore.xyz/");
+            }}
+          >
             Docs
           </Button>
           <Dropdown color="success" label="Profile">
