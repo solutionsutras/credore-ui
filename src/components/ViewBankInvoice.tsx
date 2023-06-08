@@ -12,7 +12,7 @@ import axios from "axios";
 // import Menu from "@mui/material/Menu";
 // import MenuItem from "@mui/material/MenuItem";
 
-const ViewInvoice = () => {
+const ViewBankInvoice = () => {
   var converter = require("number-to-words");
   const [visible, setVisible] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -31,12 +31,11 @@ const ViewInvoice = () => {
   const [invoice, setInvoice] = useState({});
   const [notarised, setNotarised] = useState<boolean>(false);
   const [verified, setVerified] = useState<boolean>(false);
-  const [invoiceItems, setInvoiceItems] = useState([]);
+  const [invoiceNo, setInvoiceNo] = useState("");
 
   useEffect(() => {
-    let inv: {} = localStorage.getItem("currentInvoice");
-    const currentInvoice = JSON.parse(inv);
-
+    let currentInvoice = localStorage.getItem("currentInvoice");
+    currentInvoice = JSON.parse(currentInvoice);
     setInvoice(currentInvoice);
     console.log("currentInvoice: ", currentInvoice);
 
@@ -48,18 +47,20 @@ const ViewInvoice = () => {
     setId(auth.customerId);
     setName(auth.customerName);
     setEmail(auth.email);
-    setInvoiceItems(currentInvoice.Invoice_Lines);
+    setInvoiceNo(currentInvoice.invoice_number);
 
-    if (currentInvoice.latestStatus) {
-      if (currentInvoice.latestStatus == "accepted") {
-        setNotarised(true);
-      }
+    if (currentInvoice.Audit_Trail.length > 0) {
+      console.log(
+        "currentInvoice.Audit_Trail.length: ",
+        currentInvoice.Audit_Trail.length
+      );
+      setNotarised(true);
     }
   }, []);
 
-  useEffect(() => {
-    console.log("invoice.Invoice_Lines: ", invoice.Invoice_Lines);
-  }, [invoice]);
+  //   useEffect(() => {
+  //     console.log("invoice: ", invoice);
+  //   }, [invoice]);
 
   const notarise = (item) => {
     // console.log("notarise - item: ", item);
@@ -188,25 +189,15 @@ const ViewInvoice = () => {
           <Divider className="bg-gray-300" />
           <div className="w-full bg-white"></div>
         </div>
-
         <div className="px-3">
           <Card>
             <div>
-              <div className="pb-3">
-                <p className="text-2xl font-bold">Invoice Details</p>
+              <div className="px-5 pt-8 pb-3 flex justify-between">
+                <p className="text-2xl font-bold">View Invoice Details</p>
               </div>
 
-              <div className="flex">
-                <label className="mb-1 block text-base font-semibold text-gray-700 ">
-                  Status
-                </label>
-                <span className="mb-1 block text-base font-medium text-gray-500 ml-5">
-                  {invoice.latestStatus}
-                </span>
-              </div>
-
-              <div className="items-center col-md-12 mt-3 gap-1 flex-col">
-                <div className="col-md-3 flex flex-row justify-between">
+              <div className="items-center col-md-12 mt-3">
+                <div className="col-md-12 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Invoice No
                   </label>
@@ -214,23 +205,23 @@ const ViewInvoice = () => {
                     {invoice.invoice_number}
                   </span>
                 </div>
-                <div className="col-md-3 flex flex-row justify-between">
+                <div className="col-md-12 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Invoice Date
                   </label>
                   <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
-                    {moment(invoice.invoice_date).format("Do MMM YYYY")}
+                    {invoice.invoice_date}
                   </span>
                 </div>
-                <div className="col-md-3 flex flex-row justify-between">
+                <div className="col-md-12 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Due Date
                   </label>
                   <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
-                    {moment(invoice.due_date).format("Do MMM YYYY")}
+                    {invoice.due_date}
                   </span>
                 </div>
-                <div className="col-md-3 flex flex-row justify-between">
+                <div className="col-md-12 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Amount
                   </label>
@@ -240,12 +231,12 @@ const ViewInvoice = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-start gap-2 col-md-12 mt-6">
+              <div className="flex items-center justify-start gap-4 col-md-12 mt-3">
                 <div className="col-md-4 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Supplier
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
                     {invoice.supplier_name}
                   </span>
                 </div>
@@ -253,7 +244,7 @@ const ViewInvoice = () => {
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Supplier Address
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
                     {invoice.supplier_address}
                   </span>
                 </div>
@@ -261,18 +252,18 @@ const ViewInvoice = () => {
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Supplier Tax Id
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
                     {invoice.supplier_vat_number}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-start gap-2 col-md-12 mt-1">
+              <div className="flex items-center justify-start gap-4 col-md-12 mt-3">
                 <div className="col-md-4 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Supplier Contact Person
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
                     {invoice.supplier_contact_name}
                   </span>
                 </div>
@@ -280,7 +271,7 @@ const ViewInvoice = () => {
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Supplier Contact Email
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
                     {invoice.supplier_contact_email}
                   </span>
                 </div>
@@ -289,118 +280,64 @@ const ViewInvoice = () => {
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
                     Supplier Contact Phone
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
                     {invoice.supplier_contact_phone}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-start gap-2 col-md-12 mt-6">
+              <div className="flex items-center justify-start gap-4 col-md-12 mt-3">
                 <div className="col-md-4 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
-                    Customer Name
+                    Supplier Contact Person
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
-                    {invoice.customer_name}
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                    {invoice.supplier_contact_name}
                   </span>
                 </div>
                 <div className="col-md-4 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
-                    Customer Address
+                    Supplier Contact Email
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
-                    {invoice.customer_address}
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                    {invoice.supplier_contact_email}
                   </span>
                 </div>
 
                 <div className="col-md-4 flex">
                   <label className="mb-1 block text-sm font-semibold text-gray-700 ">
-                    Customer Tax ID
+                    Supplier Contact Phone
                   </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
-                    {invoice.customer_vat_number}
+                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-5">
+                    {invoice.supplier_contact_phone}
                   </span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-start gap-1 col-md-12 mt-1">
-                <div className="col-md-4 flex">
-                  <label className="mb-1 block text-sm font-semibold text-gray-700 ">
-                    Customer Contact Email
-                  </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
-                    {invoice.customer_contact_name}
-                  </span>
-                </div>
-                <div className="col-md-4 flex">
-                  <label className="mb-1 block text-sm font-semibold text-gray-700 ">
-                    Customer Contact Email
-                  </label>
-                  <span className="mb-1 block text-sm font-medium text-gray-500 ml-2">
-                    {invoice.customer_contact_email}
-                  </span>
-                </div>
-              </div>
-
-              <div className="col-md-12 mt-10">
-                <p className="font-medium">{invoiceItems.length} Items</p>
-                <div className="">
-                  {invoiceItems.length == 0 ? (
-                    <p className="font-medium">No Items</p>
-                  ) : (
-                    <div>
-                      <table className="border">
-                        <thead>
-                          <tr className="bg-transparent">
-                            <th className="text-sm text-gray-900 font-bold px-6 py-2 border">
-                              Item Name
-                            </th>
-                            <th className="text-sm text-gray-900 font-bold px-6 py-2 border">
-                              Quantity
-                            </th>
-                            <th className="text-sm text-gray-900 font-bold px-6 py-2 border">
-                              Unit Price
-                            </th>
-                            <th className="text-text-gray-900 font-bold px-6 py-2 border">
-                              Item Total
-                            </th>
-                          </tr>
-                        </thead>
-
-                        {invoiceItems.map((item, index) => (
-                          <tr className="my-0 text-sm bg-white dark:border-gray-700 dark:bg-gray-800 items-center">
-                            <td className="text-gray-600 font-medium px-6 py-1">
-                              {item.description}
-                            </td>
-                            <td className="text-gray-600 font-medium px-6 py-1">
-                              {item.quantity}
-                            </td>
-                            <td className="text-gray-600 font-medium px-6 py-1">
-                              {invoice.currency}.{item.unit_price}
-                            </td>
-                            <td className="text-gray-600 font-medium px-6 py-1">
-                              {invoice.currency}.{item.line_total}
-                            </td>
-                          </tr>
-                        ))}
-                      </table>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
           </Card>
 
           <div>
-            <div className="mt-5">
-              <Button
-                onClick={() => verifyInvoice(invoice)}
-                color="white"
-                className="w-60 px-10 py5 bg-[#238f74] text-white"
-              >
-                Verify Invoice
-              </Button>
-            </div>
+            {notarised ? (
+              <div className="mt-5">
+                <Button
+                  onClick={() => verifyInvoice(invoice)}
+                  color="white"
+                  className="w-60 px-10 py5 bg-[#238f74] text-white"
+                >
+                  Verify
+                </Button>
+              </div>
+            ) : (
+              <div className="mt-5">
+                <Button
+                  onClick={() => notarise(invoice)}
+                  color="white"
+                  className="w-60 px-10 py5 bg-[#f15928] text-white"
+                >
+                  Notarise
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -408,4 +345,4 @@ const ViewInvoice = () => {
   );
 };
 
-export default ViewInvoice;
+export default ViewBankInvoice;

@@ -264,7 +264,7 @@ form[action$="destroy"] button {
 #sidebar {
   width: 20%;
   /* background-color: #f7f7f7; */
-  background-color: #e9a58f;
+  background-color: #f159289e;
   border-right: solid 1px #e3e3e3;
   display: flex;
   flex-direction: column;
@@ -552,3 +552,5 @@ i {
 .border-theme1 {
   border: 1px solid #29564b;
 }
+.p-1px{padding:1px !important}
+.p-2px{padding:2px !important}
