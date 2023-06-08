@@ -57,12 +57,15 @@ const Dashboard = () => {
     const url = `https://dev.credore.xyz/invoice/invoiceDetail/${myApiKey}`;
 
     axios
-      .get(`https://dev.credore.xyz/invoice/invoiceDetail/${myApiKey}`, myConfig)
+      .get(
+        `https://dev.credore.xyz/invoice/invoiceDetail/${myApiKey}`,
+        myConfig
+      )
       .then((response) => {
         setData(response.data);
         console.log("response: ", response);
         const result = response.data;
-        setInvoiceCount(response.data.length)
+        setInvoiceCount(response.data.length);
 
         console.log("Result is >>>>", result);
         if (result.length > 0) {
@@ -123,24 +126,25 @@ const Dashboard = () => {
             {data.length === 0 ? (
               <div className="flex flex-row items-center">
                 <p>No invoices found for this user, Please add a new invoice</p>
-                <Link href={"/new_invoice"}>
-                  <Button className="bg-[#039370] focus:bg-[#F15928]  hover:bg-[#29564B] m-5">
-                    + Add Invoice
-                  </Button>
-                </Link>
               </div>
             ) : (
-              <div className="flex justify-start w-full">
-                {/* <div className="flex flex-row items-center"> */}
-                <Link href={"/invoices"}>
-                  <Button className="bg-[#F15928] focus:bg-[#29564B]  hover:bg-[#29564B] m-5 w-200">
-                    {invoiceCount} Invoices
-                  </Button>
-                </Link>
+              <div className="flex flex-row items-center justify-between w-full">
+                <div className="flex ">
+                  <Link href={"/invoices"}>
+                    <Button className="bg-[#F15928] focus:bg-[#29564B]  hover:bg-[#29564B] m-5 w-200">
+                      {invoiceCount} Invoices
+                    </Button>
+                  </Link>
 
-                <Link href={"/pnotes"}>
-                  <Button className="bg-[#F15928] focus:bg-[#29564B]  hover:bg-[#29564B] m-5  w-200">
-                    {pNotesCount} Promissory Notes
+                  <Link href={"/pnotes"}>
+                    <Button className="bg-[#F15928] focus:bg-[#29564B]  hover:bg-[#29564B] m-5  w-200">
+                      {pNotesCount} Promissory Notes
+                    </Button>
+                  </Link>
+                </div>
+                <Link href={"/new_invoice"}>
+                  <Button className="bg-[#039370] focus:bg-[#F15928]  hover:bg-[#29564B] m-5">
+                    + Add New Invoice
                   </Button>
                 </Link>
                 {/* </div> */}

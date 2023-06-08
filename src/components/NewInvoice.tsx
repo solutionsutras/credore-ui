@@ -311,7 +311,7 @@ const NewInvoice = () => {
           <div className="px-3">
             <Card>
               <h5 className="text-[#29564b] mx-3">
-                Please enter the below information to ass the invoice
+                Please enter the below information to add the invoice
               </h5>
               <div className="flex  justify-between m-auto border-1 border-theme1">
                 <div className="w-full px-5 py-3 bg-white">

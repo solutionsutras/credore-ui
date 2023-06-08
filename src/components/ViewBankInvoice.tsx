@@ -123,6 +123,7 @@ const ViewBankInvoice = () => {
         myConfig
       )
       .then((response) => {
+        // alert("Invoice Verified Successfully \n"+ "\n" + "Invoice No: "+ response.data.invoice_number + "\n"+"");
         alert("Invoice Verified Successfully");
         setVerifiedResponse(JSON.stringify(response.data));
         console.log("verify response: ", response);

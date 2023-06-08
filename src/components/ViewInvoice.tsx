@@ -7,12 +7,14 @@ import Drawee from "./Drawee";
 import DropdownBtn from "./DropdownBtn";
 import Sidebar from "./Sidebar";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 // import Button from "@mui/material/Button";
 // import Menu from "@mui/material/Menu";
 // import MenuItem from "@mui/material/MenuItem";
 
 const ViewInvoice = () => {
+  const router = useRouter();
   var converter = require("number-to-words");
   const [visible, setVisible] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -32,6 +34,7 @@ const ViewInvoice = () => {
   const [notarised, setNotarised] = useState<boolean>(false);
   const [verified, setVerified] = useState<boolean>(false);
   const [invoiceItems, setInvoiceItems] = useState([]);
+  const [financeOption, setFinanceOption] = useState<boolean>(false);
 
   useEffect(() => {
     let inv: {} = localStorage.getItem("currentInvoice");
@@ -140,7 +143,6 @@ const ViewInvoice = () => {
   };
 
   const verifyInvoice = (item) => {
-    // console.log("verifyInvoice");
     let authStr = localStorage.getItem("user");
     authStr = JSON.parse(authStr);
     // console.log("authStr: ", authStr);
@@ -177,6 +179,12 @@ const ViewInvoice = () => {
       });
   };
 
+  const requestFinance = (item) => {
+    console.log("line-182-item: ", item);
+    localStorage.setItem("financeReqData", JSON.stringify(item));
+    router.push("/request_finance");
+  };
+
   return (
     <div className="flex justify-between">
       {/* Sidebar Start*/}
@@ -186,7 +194,7 @@ const ViewInvoice = () => {
       <div id="detail">
         <div className="p-4">
           <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-[#29564b]">
-            Hello!, {name}
+            Hello! {name}
           </h5>
           <Divider className="bg-gray-300" />
           <div className="w-full bg-white"></div>
@@ -195,7 +203,7 @@ const ViewInvoice = () => {
         <div className="px-3">
           <Card>
             <div>
-            <div className="px-5 pt-8 pb-3 flex justify-between">
+              <div className="px-5 pt-8 pb-3 flex justify-between">
                 <p className="text-2xl font-bold">Invoice Details</p>
               </div>
 
@@ -394,24 +402,36 @@ const ViewInvoice = () => {
             </div>
           </Card>
 
-          <div>
+          <div className="flex items-center">
             <div className="my-5">
               {notarised ? (
-                <Button
-                onClick={() => verifyInvoice(invoice)}
-                color="white"
-                className="w-60 px-10 py5 bg-[#238f74] text-white"
-              >
-                Verify Invoice
-              </Button>
+                <div className="flex items-center gap-4">
+                  <Button
+                    onClick={() => verifyInvoice(invoice)}
+                    color="white"
+                    className="w-60 px-10 py5 bg-[#238f74] text-white"
+                  >
+                    Verify Invoice
+                  </Button>
+
+                  <Button
+                    onClick={() => requestFinance(invoice)}
+                    color="white"
+                    className="w-60 px-10 py5 bg-[#f15928] text-white"
+                  >
+                    Request Finace
+                  </Button>
+                </div>
               ) : (
-                <Button
-                  onClick={() => notarise(invoice)}
-                  color="white"
-                  className="w-60 px-10 py5 bg-[#238f74] text-white"
-                >
-                  Notarise Invoice
-                </Button>
+                <div>
+                  <Button
+                    onClick={() => notarise(invoice)}
+                    color="white"
+                    className="w-60 px-10 py5 bg-[#238f74] text-white"
+                  >
+                    Notarise Invoice
+                  </Button>
+                </div>
               )}
             </div>
           </div>

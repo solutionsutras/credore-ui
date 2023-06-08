@@ -36,7 +36,7 @@ const TopHeader = () => {
             <Dropdown.Item className="font-bold">Settings</Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item className="font-bold">
-              <Link href={"/"}>Sign Out</Link>
+              <Link href={"/signin"}>Sign Out</Link>
             </Dropdown.Item>
           </Dropdown>
         </div>
