@@ -328,7 +328,7 @@ const Invoices = () => {
       <div id="detail">
         <div className="p-4">
           <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white text-[#29564b]">
-            Hello!, {name}
+            Hello! {name}
           </h5>
         </div>
         <div className="px-3">
