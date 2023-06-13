@@ -8,6 +8,7 @@ import DropdownBtn from "./DropdownBtn";
 import Sidebar from "./Sidebar";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { alertService } from "../services";
 
 // import Button from "@mui/material/Button";
 // import Menu from "@mui/material/Menu";
@@ -35,6 +36,10 @@ const ViewInvoice = () => {
   const [verified, setVerified] = useState<boolean>(false);
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [financeOption, setFinanceOption] = useState<boolean>(false);
+  const [options, setOptions] = useState({
+    autoClose: false,
+    keepAfterRouteChange: false,
+  });
 
   useEffect(() => {
     let inv: {} = localStorage.getItem("currentInvoice");
@@ -125,8 +130,18 @@ const ViewInvoice = () => {
             )
             .then((response) => {
               setNotarised(true);
-              alert("Invoice Notarised Successfully");
+              alert(
+                "Invoice Notarised Successfully !!! " +
+                  "\n Asset id: " +
+                  response.data.asset.asset_id +
+                  "\n NFT Id: " + response.data.nft_id +
+                  "\n assetMerkleRoot: " + response.data.asset.assetMerkleRoot +
+                  "\n gleiVerificationDate: " + response.data.asset.gleiVerificationDate +
+                  "\n verificationDate: " + response.data.asset.verificationDate +
+                  "\n txHash: " + response.data.txHash
+              );
               console.log("notarise response: ", response);
+              router.push("/view_invoice");
               //   let configData = JSON.parse(response.config.data);
               //   console.log("configData: ", configData);
             })
