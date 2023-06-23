@@ -339,7 +339,7 @@ const Invoices = () => {
                 <div className="pb-2">
                   <Link href={"/new_invoice"}>
                     <Button className="bg-[#F15928] focus:bg-[#29564B]  hover:bg-[#29564B]">
-                      Add Invoice
+                      +  Add Invoice
                     </Button>
                   </Link>
                 </div>

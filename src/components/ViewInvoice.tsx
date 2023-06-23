@@ -1,5 +1,13 @@
 import { Divider } from "@mui/material";
-import { Button, Card, Dropdown, Modal, Table, Tabs } from "flowbite-react";
+import {
+  Button,
+  Card,
+  Alert,
+  Dropdown,
+  Modal,
+  Table,
+  Tabs,
+} from "flowbite-react";
 import moment from "moment";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -33,6 +41,23 @@ const ViewInvoice = () => {
 
   const [invoice, setInvoice] = useState({});
   const [notarised, setNotarised] = useState<boolean>(false);
+  const [notarisedData, setNotarisedData] = useState({
+    asset: {
+      asset_id: "",
+      nft_id: "",
+      assetMerkleRoot: "",
+      assetType: "",
+      glei: "",
+      gleiVerificationDate: "",
+      verificationDate: "",
+      originator: "",
+      status: "",
+      erc1155_address: "",
+      owner_pubkey_address: "",
+      chain: "",
+    },
+    txHash: "",
+  });
   const [verified, setVerified] = useState<boolean>(false);
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [financeOption, setFinanceOption] = useState<boolean>(false);
@@ -70,8 +95,15 @@ const ViewInvoice = () => {
   }, []);
 
   useEffect(() => {
-    console.log("invoice.Invoice_Lines: ", invoice.Invoice_Lines);
-  }, [invoice]);
+    console.log("notarisedData: ", notarisedData);
+    if (Object.keys(notarisedData).length === 0) {
+      return;
+    } else {
+      if (notarisedData.txHash !== "") {
+        setVisible(true);
+      }
+    }
+  }, [notarisedData]);
 
   const notarise = (item) => {
     try {
@@ -98,9 +130,7 @@ const ViewInvoice = () => {
           myConfig
         )
         .then((response) => {
-          alert("Merkle Root Created Successfully");
-
-          console.log("merkelRoot response: ", response);
+          console.log("merkleRoot response: ", response);
           let configData = JSON.parse(response.config.data);
           console.log("Notarise Input: ", configData);
 
@@ -119,7 +149,7 @@ const ViewInvoice = () => {
             status: "notarised",
           };
           console.log("nData: ", nData);
-          console.log("104-myConfig: ", myConfig);
+          console.log("120-myConfig: ", myConfig);
           const chain = "polygon";
 
           axios
@@ -130,18 +160,9 @@ const ViewInvoice = () => {
             )
             .then((response) => {
               setNotarised(true);
-              alert(
-                "Invoice Notarised Successfully !!! " +
-                  "\n Asset id: " +
-                  response.data.asset.asset_id +
-                  "\n NFT Id: " + response.data.nft_id +
-                  "\n assetMerkleRoot: " + response.data.asset.assetMerkleRoot +
-                  "\n gleiVerificationDate: " + response.data.asset.gleiVerificationDate +
-                  "\n verificationDate: " + response.data.asset.verificationDate +
-                  "\n txHash: " + response.data.txHash
-              );
+              setNotarisedData(response.data);
               console.log("notarise response: ", response);
-              router.push("/view_invoice");
+              // router.push("/view_invoice");
               //   let configData = JSON.parse(response.config.data);
               //   console.log("configData: ", configData);
             })
@@ -452,6 +473,77 @@ const ViewInvoice = () => {
           </div>
         </div>
       </div>
+      {notarisedData.txHash && (
+        <>
+          <Modal size="6xl" show={visible} popup={true}>
+            <div className="px-5 pt-8 pb-3 flex justify-between">
+              <p className="text-2xl font-bold">
+                Invoice Notarised Successfully
+              </p>
+            </div>
+            <Divider className="bg-gray-300" />
+            <div className="w-full bg-white"></div>
+            <Modal.Body>
+              <div className="my-7 mb-5 text-sm">
+                <div className="flex flex-row items-center mb-2">
+                  <label className="font-semibold text-gray-700 w-[15%]">
+                    Asset Id:{" "}
+                  </label>
+                  <span className="text-gray-500 ml-2">
+                    {notarisedData.asset.asset_id}
+                  </span>
+                </div>
+                <div className="flex flex-row items-center mb-2">
+                  <label className="font-semibold text-gray-700 w-[15%]">
+                    Merkleroot:{" "}
+                  </label>
+                  <span className="text-gray-500 ml-2">
+                    {notarisedData.asset.assetMerkleRoot}
+                  </span>
+                </div>
+                <div className="flex flex-row items-center mb-2">
+                  <label className="font-semibold text-gray-700 w-[15%]">
+                    txHash:{" "}
+                  </label>
+                  <span className="ml-2 text-blue-600">
+                    <Link href={notarisedData.txHash}>
+                      <a target="_blank">{notarisedData.txHash}</a>
+                    </Link>
+                  </span>
+                </div>
+                {/* <div className="flex flex-row items-center mb-2">
+                  <label className="text-base font-semibold text-gray-700 w-[15%]">
+                    Verification Date:{" "}
+                  </label>
+                  <span className="text-base font-medium text-gray-500 ml-2">
+                    {moment(notarisedData.asset.verificationDate).format(
+                      "MMM Do YYYY"
+                    )}
+                  </span>
+                </div> */}
+              </div>
+
+              <div className="items-center">
+                <Button className="mt-10" onClick={() => {}} color="success">
+                  <Link href={notarisedData.txHash}>
+                    <a target="_blank">Check txHash</a>
+                  </Link>
+                </Button>
+              </div>
+              <Button
+                className="mt-10"
+                onClick={() => {
+                  setVisible(false);
+                  router.push("/invoices");
+                }}
+                color="failure"
+              >
+                Close
+              </Button>
+            </Modal.Body>
+          </Modal>
+        </>
+      )}
     </div>
   );
 };
