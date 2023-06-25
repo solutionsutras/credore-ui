@@ -1,0 +1,60 @@
+[
+  {
+    "id": "ac2605da-8bb2-407c-b3c0-da361bd8583c",
+    "invoice_number": "INV000994",
+    "invoice_date": "2023-05-30T04:59:19.539Z",
+    "due_date": "2023-06-30T04:59:19.539Z",
+    "amount": "10000",
+    "currency": "EU",
+    "supplier_name": "Textile",
+    "supplier_address": "BBSR",
+    "supplier_vat_number": "IN1234567890123Z1",
+    "supplier_contact_email": "swaroopsahoo@rediffmail.com",
+    "supplier_contact_name": "Jay",
+    "supplier_contact_phone": "88888888888",
+    "customer_name": "Puma",
+    "customer_address": "London, UK",
+    "customer_vat_number": "GB123456789",
+    "customer_contact_name": "Kevin",
+    "customer_contact_email": "kevin@gmail.com",
+    "Invoice_Lines": [
+      {
+        "id": "2a0d321e-b353-4c82-b20a-c4209f2a4bfc",
+        "invoice_id": "ac2605da-8bb2-407c-b3c0-da361bd8583c",
+        "description": "best for sneakers",
+        "quantity": "2",
+        "unit_price": "5000",
+        "line_total": "10"
+      }
+    ]
+  },
+  {
+    "id": "ac2605da-8bb2-407c-b3c0-da361bd8583d",
+    "invoice_number": "INV0009995",
+    "invoice_date": "2023-03-30T04:59:19.539Z",
+    "due_date": "2023-09-30T04:59:19.539Z",
+    "amount": "20000",
+    "currency": "USD",
+    "supplier_name": "Textile",
+    "supplier_address": "BBSR",
+    "supplier_vat_number": "IN1234567890123Z1",
+    "supplier_contact_email": "swaroopsahoo@rediffmail.com",
+    "supplier_contact_name": "Jay",
+    "supplier_contact_phone": "7777777777",
+    "customer_name": "Nike",
+    "customer_address": "New York, USA",
+    "customer_vat_number": "GB123456999",
+    "customer_contact_name": "James",
+    "customer_contact_email": "james234@gmail.com",
+    "Invoice_Lines": [
+      {
+        "id": "2a0d321e-b353-4c82-b20a-c4209f2a4bfc",
+        "invoice_id": "ac2605da-8bb2-407c-b3c0-da361bd8583d",
+        "description": "best for sneakers",
+        "quantity": "2",
+        "unit_price": "10000",
+        "line_total": "10"
+      }
+    ]
+  }
+]
